@@ -2,6 +2,8 @@ import 'package:cruzadista/components/colors.dart';
 import 'package:cruzadista/components/fonte_size.dart';
 import 'package:flutter/material.dart';
 
+import '../components/alert_dialog_recovery_password.dart';
+
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -101,7 +103,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(
-                        height: 4,
+                        height: 10,
                       ),
                       Card(
                         elevation: 2,
@@ -125,10 +127,10 @@ class _LoginState extends State<Login> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, "/ui/login");
+                              Navigator.pushNamed(context, "/ui/home");
                             },
                             child: Text(
-                              "INICIAR",
+                              "ENTRAR",
                               style: TextStyle(
                                   color: MyColors.colorOnPrimary,
                                   fontFamily: 'Poppins',
@@ -159,11 +161,12 @@ class _LoginState extends State<Login> {
                                 ),
                               ),
                               onPressed: () {
-                                setState(() {
-                                  _colorBtnLogin = MyColors.colorPrimary;
-                                  _colorBtnRegistre = MyColors.gray;
-                                  _screenLogin = false;
-                                });
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return DialogRecoveryPassword();
+                                  },
+                                );
                               },
                               child: Text(
                                 "Esqueceu a Senha?",
@@ -199,7 +202,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(
-                        height: 4,
+                        height: 10,
                       ),
                       Card(
                         elevation: 2,
@@ -218,7 +221,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(
-                        height: 4,
+                        height: 10,
                       ),
                       Card(
                         elevation: 2,
@@ -237,7 +240,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(
-                        height: 4,
+                        height: 10,
                       ),
                       Card(
                         elevation: 2,
@@ -256,7 +259,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(
-                        height: 4,
+                        height: 10,
                       ),
                       Card(
                         elevation: 2,
@@ -275,7 +278,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(
-                        height: 4,
+                        height: 10,
                       ),
                       Text('Ao clicar no botão Cadastrar, você aceita os'),
                       Text(
@@ -289,7 +292,7 @@ class _LoginState extends State<Login> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, "/ui/login");
+                              Navigator.pushNamed(context, "/ui/home");
                             },
                             child: Text(
                               "CADASTRA-SE",
