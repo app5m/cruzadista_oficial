@@ -1,3 +1,4 @@
+import 'package:cruzadista/ui/game.dart';
 import 'package:cruzadista/ui/home.dart';
 import 'package:cruzadista/ui/login.dart';
 import 'package:cruzadista/ui/menu.dart';
@@ -9,8 +10,12 @@ import 'package:cruzadista/ui/update_password.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  var theme = ThemeMode.light;
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
+    theme: ThemeData.light(),
+    darkTheme: ThemeData.dark(),
+    themeMode: theme,
     title: "Cruzadista",
     initialRoute: '/ui/splash',
     routes: {
@@ -25,6 +30,7 @@ void main() {
       '/ui/menu': (context) => Menu(),
       '/ui/myProfile': (context) => MyProfile(),
       '/ui/updatePassword': (context) => UpdatePassword(),
+      '/ui/game': (context) => Game(),
       // //EU SO ESTOU USANDO AS ROTAS ate a HOME
       // '/ui/view_pdf': (context) => ViewPdf(),
       // '/ui/menu': (context) => Menu(),

@@ -463,7 +463,10 @@ class MyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+
+        Navigator.pushNamed(context, "/ui/game");
+      },
       child: Card(
         margin: EdgeInsets.only(left: 8, right: 8, bottom: 8),
         elevation: 4,
