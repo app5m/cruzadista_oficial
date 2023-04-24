@@ -58,7 +58,9 @@ class _OnboardingState extends State<Onboarding> {
                     image: demo_data[index].image,
                     title: demo_data[index].title,
                     subtitle: demo_data[index].subtitle,
-                  ))),
+                  )
+              )
+          ),
           SizedBox(
             child: Container(
               child: Padding(
@@ -112,7 +114,7 @@ class _OnboardingState extends State<Onboarding> {
           ),
           if (_isLastPage)
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.only(bottom: 18, left: 16, right: 16),
               child: Container(
                 width: double.infinity,
                 child: ElevatedButton(

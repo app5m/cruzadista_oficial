@@ -93,7 +93,7 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
                             decoration: InputDecoration(
                                 border: InputBorder.none,
@@ -112,7 +112,7 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -192,7 +192,7 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -211,7 +211,7 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -230,7 +230,7 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -249,7 +249,7 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -268,7 +268,7 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
                             decoration: InputDecoration(
                               border: InputBorder.none,

@@ -72,10 +72,17 @@ flutter:
     - images/crossword.png
     - images/nightmode.png
     - images/playbutton.png
+    - images/avatar.png
 
     - icons/filtro.svg
     - icons/notification.svg
     - icons/notification_bell.svg
+    - icons/exit.svg
+    - icons/lock.svg
+    - icons/reset2.svg
+    - icons/share.svg
+    - icons/trash.svg
+    - icons/user.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

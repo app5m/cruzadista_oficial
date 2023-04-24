@@ -95,7 +95,6 @@ class _HomeState extends State<Home> {
             children: [
               Row(
                 mainAxisSize: MainAxisSize.max,
-                // Define o tamanho máximo para a Row
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
@@ -112,10 +111,12 @@ class _HomeState extends State<Home> {
                     onTap: (){
                       Navigator.pushNamed(context, "/ui/menu");
                     },
+                    //avatar.png
                     child: Material(
                     elevation: 8,
                     shape: CircleBorder(),
                     child: CircleAvatar(
+                      backgroundImage: ExactAssetImage('images/avatar.png'),
                       radius: 30,
                       backgroundColor: MyColors.grayLite,
                     ),
@@ -125,6 +126,7 @@ class _HomeState extends State<Home> {
                   ),
                   InkWell(onTap: (){
                     Navigator.pushNamed(context, "/ui/notification");
+
                   },
                     child: Card(
                     margin: EdgeInsets.all(0),
@@ -141,10 +143,10 @@ class _HomeState extends State<Home> {
                       child: SvgPicture.asset('icons/notification.svg'),
                     ),
                     borderOnForeground: false,
-                    // Remove a borda transparente
                     clipBehavior: Clip
-                        .antiAlias, // Adiciona um efeito anti-aliasing para melhorar a aparência do corte do canto
-                  ),),
+                        .antiAlias,
+                  ),
+                  ),
                 ],
               ),
               SizedBox(

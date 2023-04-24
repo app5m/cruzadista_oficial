@@ -2,8 +2,10 @@ import 'package:cruzadista/ui/home.dart';
 import 'package:cruzadista/ui/login.dart';
 import 'package:cruzadista/ui/menu.dart';
 import 'package:cruzadista/ui/my_notifications.dart';
+import 'package:cruzadista/ui/my_profile.dart';
 import 'package:cruzadista/ui/onboarding.dart';
 import 'package:cruzadista/ui/splash.dart';
+import 'package:cruzadista/ui/update_password.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -21,6 +23,8 @@ void main() {
       '/ui/notification': (context) => MyNotifications(),
       // AQUI EU USO NAVEGAÇAO DIFERENTES DAS ROTAS VAI NA LINHAS: 55, 161, 192 e 221
       '/ui/menu': (context) => Menu(),
+      '/ui/myProfile': (context) => MyProfile(),
+      '/ui/updatePassword': (context) => UpdatePassword(),
       // //EU SO ESTOU USANDO AS ROTAS ate a HOME
       // '/ui/view_pdf': (context) => ViewPdf(),
       // '/ui/menu': (context) => Menu(),
