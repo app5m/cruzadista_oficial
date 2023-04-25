@@ -1,3 +1,4 @@
+import 'package:cruzadista/components/fonte_size.dart';
 import 'package:flutter/material.dart';
 
 import 'colors.dart';
@@ -44,17 +45,19 @@ class _DialogDicState extends State<DialogDic> {
                 fontWeight: FontWeight.w600,
                 color: widget.colorText == Colors.white ? Colors.black : widget.colorText,
                 fontFamily: 'Poppins',
+                fontSize: FontSizes.titulo
               ),)),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Revelar Palavra', style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: widget.colorText,
-                  fontFamily: 'Poppins',
-                ),
+                child: Text('Revelar Palavra',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Poppins',
+                      color: widget.colorText,
+                      fontSize: FontSizes.subTitulo),
                 ),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<
@@ -74,11 +77,12 @@ class _DialogDicState extends State<DialogDic> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Relevar Letra' , style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: widget.colorText,
-                  fontFamily: 'Poppins',
-                ),
+                child: Text('Relevar Letra' ,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Poppins',
+                      color: widget.colorText,
+                      fontSize: FontSizes.subTitulo),
                 ),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<

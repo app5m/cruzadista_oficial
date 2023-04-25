@@ -367,7 +367,7 @@ class _HomeState extends State<Home> {
                         ),
                         Container(
                           height: 2,
-                          width: _selectedIndex == 0 ? _tabs[0].length * 10 : 0,
+                          width: _selectedIndex == 0 ? _tabs[0].length * 12 : 0,
                           color: _selectedIndex == 0
                               ? Colors.black
                               : Colors.transparent,
@@ -422,7 +422,6 @@ class _HomeState extends State<Home> {
                       crossAxisCount: 2, // Define duas colunas
                       children: List.generate(crossWords.length, (index) {
                         return MyCard(crossWordL: crossWords[index]);
-                        ;
                       }),
                     ),
                   ),
@@ -435,7 +434,6 @@ class _HomeState extends State<Home> {
                       crossAxisCount: 2, // Define duas colunas
                       children: List.generate(crossWords2.length, (index) {
                         return MyCard(crossWordL: crossWords2[index]);
-                        ;
                       }),
                     ),
                   ),

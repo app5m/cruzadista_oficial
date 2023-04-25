@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.com.app5m.cruzadista.cruzadista">
    <application
-        android:label="cruzadista"
+        android:label="Cruzadista"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

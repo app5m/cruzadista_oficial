@@ -88,7 +88,7 @@ class _GameState extends State<Game> {
                   child: Text(
                     "N°1",
                     style: TextStyle(
-                      color: _colorText,
+                      color: _colorCell == Colors.white ? Colors.black : _colorCell,
                       fontSize: FontSizes.titulo,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Poppins',

@@ -47,7 +47,7 @@ class _MyNotificationsState extends State<MyNotifications> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 16),
-                    child: Text("Notification", style: TextStyle(
+                    child: Text("Notificações", style: TextStyle(
                       fontSize: FontSizes.titulo,
                     fontWeight: FontWeight.w600,
                       fontFamily: 'Poppins',
