@@ -177,7 +177,7 @@ class _GameState extends State<Game> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Dica: Aqui vai a dica da palavra",
+                          "1. HORIZONTAL - Aqui vai a dica da palavra",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: _colorText,
