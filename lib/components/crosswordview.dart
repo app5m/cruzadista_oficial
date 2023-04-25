@@ -11,7 +11,9 @@ class CrosswordView extends StatelessWidget {
   List<int>? gridElements;
   Color? color;
   Color? colorCell;
-  CrosswordView({Key? key, this.gridElements,this.color,this.colorCell,}) : super(key: key);
+
+  CrosswordView({Key? key, this.gridElements, this.color, this.colorCell,})
+      : super(key: key);
 
   // A simplified way to represent the list of cells in the grid. In practice,
   // you would want more complex data than an integer to represent each cell
@@ -23,7 +25,8 @@ class CrosswordView extends StatelessWidget {
     Widget grid = new GridView.count(
         crossAxisCount: 8,
         shrinkWrap: true,
-        childAspectRatio: 1.0, // This means each cell is a square
+        childAspectRatio: 1.0,
+        // This means each cell is a square
         padding: const EdgeInsets.only(left: _MARGIN_HORIZONTAL,
             right: _MARGIN_HORIZONTAL,
             top: _MARGIN_VERTICAL,
@@ -32,7 +35,7 @@ class CrosswordView extends StatelessWidget {
         crossAxisSpacing: _CELL_SPACING,
         children: gridElements!.map((int cell) {
           return new Container(
-            color: cell == 0?_BLANK_CELL_BACKGROUND: colorCell,
+            color: cell == 0 ? _BLANK_CELL_BACKGROUND : colorCell,
           );
         }).toList())
     ;
@@ -44,8 +47,6 @@ class CrosswordView extends StatelessWidget {
   }
 
 }
-
-
 
 
 class CluesView extends StatelessWidget {
@@ -120,10 +121,13 @@ class CluesView extends StatelessWidget {
 const double _ROW_HEIGHT = 40.0;
 const double _KEY_WIDTH = 40.0;
 const Color _KEY_BACKGROUND = const Color(0xFFA6A6A6);
+//const Color _KEY_BACKGROUND = const Color(0xFF000000);
 
 class KeyboardView extends StatelessWidget {
   Color? colorCell;
-  KeyboardView({Key? key, this.colorCell}) : super(key: key);
+  Color? colorText;
+
+  KeyboardView({Key? key, this.colorCell, this.colorText}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -137,61 +141,70 @@ class KeyboardView extends StatelessWidget {
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child: Center(child: new Text('Q', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text('Q',
+                  style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('W', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'W', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('E', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'E', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('R', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'R', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('T', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'T', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('Y', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'Y', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('U', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'U', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('I', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'I', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('O', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'O', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
             ],
           ),
           Container(
-            height: 1.0,
+            height: 4.0,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -199,56 +212,65 @@ class KeyboardView extends StatelessWidget {
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child: Center(child: new Text('A', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'A', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('S', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'S', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('D', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'D', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('F', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'F', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('G', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'G', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('H', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'H', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('J', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'J', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('K', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'K', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
               Container(
                 width: _KEY_WIDTH,
                 height: _ROW_HEIGHT,
-                color: _KEY_BACKGROUND,
-                child:  Center(child: new Text('L', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+                color: colorCell,
+                child: Center(child: new Text(
+                  'L', style: TextStyle(fontSize: FontSizes.textoGrande, color: colorText,),)),
               ),
             ],
           ),

@@ -19,6 +19,8 @@ class _GameState extends State<Game> {
   late List<String> _downClues;
   var _theme = Colors.white;
   var _colorCell = Colors.white;
+  var _colorCellKeyboard = Colors.black;
+  var _colorTextKeyboard = Colors.white;
   var _colorText = MyColors.colorCellDark;
   var _themeDark = MyColors.darkMode;
 
@@ -103,10 +105,15 @@ class _GameState extends State<Game> {
                             _colorText = MyColors.colorCellDark;
                             _colorCell = MyColors.colorCellDark;
                             _theme = _themeDark!;
+                            _colorCellKeyboard = Colors.black;
+                            _colorTextKeyboard = MyColors.colorCellDark;
                           } else {
                             _colorText = MyColors.colorPrimary;
                             _theme = Colors.white;
                             _colorCell = Colors.white;
+                            _colorCellKeyboard = MyColors.colorPrimary;
+                            _colorTextKeyboard = Colors.white;
+
                           }
                         });
                       },
@@ -192,43 +199,43 @@ class _GameState extends State<Game> {
                         height: 2,
                         color: _colorText,
                       ),
-                      SizedBox(width: 5,),
+                      SizedBox(width: 7,),
                       Container(
                         width: 30,
                         height: 2,
                         color: _colorText,
                       ),
-                      SizedBox(width: 5,),
+                      SizedBox(width: 7,),
                       Container(
                         width: 30,
                         height: 2,
                         color: _colorText,
                       ),
-                      SizedBox(width: 5,),
+                      SizedBox(width: 7,),
                       Container(
                         width: 30,
                         height: 2,
                         color: _colorText,
                       ),
-                      SizedBox(width: 5,),
+                      SizedBox(width: 7,),
                       Container(
                         width: 30,
                         height: 2,
                         color: _colorText,
                       ),
-                      SizedBox(width: 5,),
+                      SizedBox(width: 7,),
                       Container(
                         width: 30,
                         height: 2,
                         color: _colorText,
                       ),
-                      SizedBox(width: 5,),
+                      SizedBox(width: 7,),
                       Container(
                         width: 30,
                         height: 2,
                         color: _colorText,
                       ),
-                      SizedBox(width: 5,),
+                      SizedBox(width: 7,),
                       Container(
                         width: 30,
                         height: 2,
@@ -236,8 +243,8 @@ class _GameState extends State<Game> {
                       ),
 
                   ],),
-                  Spacer(),
-                  KeyboardView(),
+                  SizedBox(height: 28,),
+                  KeyboardView(colorCell:_colorCellKeyboard , colorText: _colorTextKeyboard ,),
                   Spacer(),
                 ],
               ),
