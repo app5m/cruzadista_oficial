@@ -119,200 +119,142 @@ class CluesView extends StatelessWidget {
 
 const double _ROW_HEIGHT = 40.0;
 const double _KEY_WIDTH = 40.0;
-const Color _KEY_BACKGROUND = const Color(0x33000000);
+const Color _KEY_BACKGROUND = const Color(0xFFA6A6A6);
 
 class KeyboardView extends StatelessWidget {
-  KeyboardView({Key? key}) : super(key: key);
+  Color? colorCell;
+  KeyboardView({Key? key, this.colorCell}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return new Column(
-      children: <Widget>[
-        new Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child: Center(child: new Text('Q', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('W', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('E', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('R', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('T', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('Y', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('U', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('I', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('O', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-          ],
-        ),
-        new Container(
-          height: 1.0,
-        ),
-        new Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child: Center(child: new Text('A', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('S', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('D', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('F', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('G', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('H', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('J', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('K', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('L', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-          ],
-        ),
-        new Container(
-          height: 1.0,
-        ),
-        new Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child: Center(child: Icon(Icons.arrow_drop_down)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('S', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('D', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('F', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('G', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('H', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('J', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: new Text('K', style: TextStyle(fontSize: FontSizes.textoGrande),)),
-            ),
-            Container(
-              width: _KEY_WIDTH,
-              height: _ROW_HEIGHT,
-              color: _KEY_BACKGROUND,
-              child:  Center(child: Icon(Icons.arrow_back)
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: new Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child: Center(child: new Text('Q', style: TextStyle(fontSize: FontSizes.textoGrande),)),
               ),
-            ),
-          ],
-        ),
-      ],
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('W', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('E', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('R', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('T', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('Y', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('U', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('I', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('O', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+            ],
+          ),
+          Container(
+            height: 1.0,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child: Center(child: new Text('A', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('S', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('D', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('F', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('G', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('H', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('J', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('K', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+              Container(
+                width: _KEY_WIDTH,
+                height: _ROW_HEIGHT,
+                color: _KEY_BACKGROUND,
+                child:  Center(child: new Text('L', style: TextStyle(fontSize: FontSizes.textoGrande),)),
+              ),
+            ],
+          ),
+
+        ],
+      ),
     );
   }
 }

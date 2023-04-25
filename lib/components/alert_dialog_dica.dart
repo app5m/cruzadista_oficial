@@ -2,13 +2,23 @@ import 'package:flutter/material.dart';
 
 import 'colors.dart';
 
-class DialogDica extends StatelessWidget {
+class DialogDic extends StatefulWidget {
+  Color? colorCell;
+  Color? colorText;
+  DialogDic({Key? key, this.colorCell, this.colorText,}) : super(key: key);
+
+  @override
+  State<DialogDic> createState() => _DialogDicState();
+}
+
+class _DialogDicState extends State<DialogDic> {
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
       widthFactor: 0.8,
       heightFactor: 0.3,
       child: Card(
+        color: widget.colorCell,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -22,7 +32,7 @@ class DialogDica extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.close),
+                    icon: Icon(Icons.close, color: widget.colorText == Colors.white ? Colors.black : widget.colorText,),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -32,6 +42,7 @@ class DialogDica extends StatelessWidget {
               SizedBox(height: 4),
               Center(child: Text('Selecione a dica', style: TextStyle(
                 fontWeight: FontWeight.w600,
+                color: widget.colorText == Colors.white ? Colors.black : widget.colorText,
                 fontFamily: 'Poppins',
               ),)),
               SizedBox(height: 16),
@@ -39,7 +50,12 @@ class DialogDica extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Revelar Palavra'),
+                child: Text('Revelar Palavra', style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: widget.colorText,
+                  fontFamily: 'Poppins',
+                ),
+                ),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<
                       RoundedRectangleBorder>(
@@ -58,7 +74,12 @@ class DialogDica extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Relevar Letra'),
+                child: Text('Relevar Letra' , style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: widget.colorText,
+                  fontFamily: 'Poppins',
+                ),
+                ),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<
                       RoundedRectangleBorder>(
@@ -81,3 +102,4 @@ class DialogDica extends StatelessWidget {
     );
   }
 }
+
