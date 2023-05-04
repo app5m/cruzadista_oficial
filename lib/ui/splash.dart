@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
-// VAI NA LINHA 15
+
   @override
   State<Splash> createState() => _SplashState();
 }

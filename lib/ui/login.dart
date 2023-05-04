@@ -175,7 +175,8 @@ class _LoginState extends State<Login> {
                                     fontSize: FontSizes.textoNormal,
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w500),
-                              )),
+                              )
+                          ),
                         ],
                       ),
                     ],
