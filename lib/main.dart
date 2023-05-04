@@ -9,8 +9,13 @@ import 'package:cruzadista/ui/splash.dart';
 import 'package:cruzadista/ui/update_password.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+import 'config/preferences.dart';
+
+main() async {
   var theme = ThemeMode.light;
+  WidgetsFlutterBinding.ensureInitialized(); // Garante a inicialização do Flutter
+
+  await Preferences.init(); // Inicializa as SharedPreferences
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData.light(),

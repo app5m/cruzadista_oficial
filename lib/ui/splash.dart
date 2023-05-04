@@ -1,6 +1,8 @@
 import 'package:cruzadista/components/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../config/preferences.dart';
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
 
@@ -10,10 +12,25 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
 
+  bool isLoggedIn = false;
+
+  @override
   void initState() {
     super.initState();
+    initializeData();
+  }
+
+  Future<void> initializeData() async {
+    await Preferences.init();
+    isLoggedIn = await Preferences.getLogin();
+    print(isLoggedIn);
+
     Future.delayed(Duration(seconds: 4), () {
-      Navigator.pushReplacementNamed(context, '/ui/onboarding'); //AQUI ESTA UMA NAVEGAÇAO COM ROTA
+      if (isLoggedIn) {
+        Navigator.pushNamed(context, '/ui/home');
+      } else {
+        Navigator.pushNamed(context, '/ui/onboarding');
+      }
     });
   }
 

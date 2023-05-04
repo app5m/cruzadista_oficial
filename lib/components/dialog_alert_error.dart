@@ -3,27 +3,23 @@ import 'package:flutter/material.dart';
 import 'colors.dart';
 import 'fonte_size.dart';
 
-class DialogGeneric extends StatefulWidget {
+class DialogError extends StatefulWidget {
   String? title;
   String? content;
-  TextButton? btnBack;
   TextButton? btnConfirm;
 
-  DialogGeneric({
+  DialogError({
     Key? key,
     this.title,
     this.content,
-    this.btnBack,
     this.btnConfirm,
   });
 
-
-
   @override
-  State<DialogGeneric> createState() => _DialogGenericState();
+  State<DialogError> createState() => _DialogErrorState();
 }
 
-class _DialogGenericState extends State<DialogGeneric> {
+class _DialogErrorState extends State<DialogError> {
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -58,9 +54,8 @@ class _DialogGenericState extends State<DialogGeneric> {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        widget.btnBack!,
                         widget.btnConfirm!
                       ],
                     )

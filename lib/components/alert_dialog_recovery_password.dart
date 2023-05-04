@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:cruzadista/components/colors.dart';
 import 'package:cruzadista/components/fonte_size.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../config/constants.dart';
+import '../config/requests.dart';
 
 class DialogRecoveryPassword extends StatefulWidget {
   const DialogRecoveryPassword({Key? key}) : super(key: key);
@@ -10,6 +15,10 @@ class DialogRecoveryPassword extends StatefulWidget {
 }
 
 class _DialogRecoveryPasswordState extends State<DialogRecoveryPassword> {
+  TextEditingController _emailRecoveryController = TextEditingController();
+  final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
+
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -44,9 +53,10 @@ class _DialogRecoveryPasswordState extends State<DialogRecoveryPassword> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Padding(
+                  child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: TextField(
+                      controller: _emailRecoveryController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Email',
@@ -60,8 +70,118 @@ class _DialogRecoveryPasswordState extends State<DialogRecoveryPassword> {
                   child: Container(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                      //  Navigator.pushNamed(context, "/ui/login");
+                      onPressed: () async {
+
+                        final email = _emailRecoveryController?.text.toString();
+
+
+
+                        try {
+                          final body = {
+                            WSConstantes.EMAIL: email,
+
+                            WSConstantes.TOKENID: WSConstantes.TOKEN
+                          };
+
+                          final response = await requestsWebServices.sendPostRequest(WSConstantes.RECOVERRY_PASSWORD, body);
+
+                          final decodedResponse = jsonDecode(response);
+
+                          if (decodedResponse is List && decodedResponse.isNotEmpty) {
+                            final userResponse = decodedResponse[0];
+                            final status = userResponse['status'];
+                            final message = userResponse['msg'];
+
+                            if (status == '01') {
+
+                              setState(() {
+                                Fluttertoast.showToast(
+                                  msg: message,
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                );
+                              });
+
+                              Navigator.pop(context);
+                            } else if (status == '02') {
+
+                              //Coloca TOAST
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Erro de autenticação'),
+                                    content: Text(message),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Erro'),
+                                    content: Text('Ocorreu um erro durante o login.'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Erro'),
+                                  content: Text('Ocorreu um erro durante o login.'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        } catch (e) {
+
+                          print('Erro durante a requisição: $e');
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Erro'),
+                                content: Text('Ocorreu um erro durante o login.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
                       },
                       child: Text(
                         "REDEFINIR SENHA",
