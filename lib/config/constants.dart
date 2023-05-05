@@ -27,4 +27,11 @@ class WSConstantes {
   static const String ID = "id";
   static const String TOKENID = "token";
 
+  /**:::Validações:::**/
+  static const String MSG_NOME_INVALIDO = 'Nome inválido, tente novamente';
+  static const String MSG_EMAIL_INVALIDO = 'Email inválido, tente novamente';
+  static const String MSG_PASSWORD_INVALIDO = 'A senha deve ter pelo menos 6 caracteres';
+  static const String MSG_PHONE_INVALIDO = 'Celular inválido, tente novamente';
+  static const String MSG_CO_PASSWORD_INVALIDO = 'As senhas fornecidas não são idênticas, por favor, verifique-as e tente novamente';
+
 }

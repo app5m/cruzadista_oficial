@@ -17,13 +17,13 @@ class DialogRecoveryPassword extends StatefulWidget {
 class _DialogRecoveryPasswordState extends State<DialogRecoveryPassword> {
   TextEditingController _emailRecoveryController = TextEditingController();
   final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
-
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox(
-        height: 280,
+        height: 320,
         child: Card(
           color: MyColors.grayLite,
           margin: EdgeInsets.all(16),
@@ -56,6 +56,7 @@ class _DialogRecoveryPasswordState extends State<DialogRecoveryPassword> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: TextField(
+                      keyboardType: TextInputType.emailAddress,
                       controller: _emailRecoveryController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
@@ -71,58 +72,88 @@ class _DialogRecoveryPasswordState extends State<DialogRecoveryPassword> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
-
+                        setState(() {
+                          isLoading = true;
+                        });
                         final email = _emailRecoveryController?.text.toString();
+                        var emptyMessage = 'Email inválido, tente novamente';
 
+                        if(email == ""){
+                          setState(() {
+                            Fluttertoast.showToast(
+                              msg: emptyMessage,
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                            );
+                            isLoading = false;
+                          });
+                        }else{
+                          try {
+                            final body = {
+                              WSConstantes.EMAIL: email,
 
+                              WSConstantes.TOKENID: WSConstantes.TOKEN
+                            };
 
-                        try {
-                          final body = {
-                            WSConstantes.EMAIL: email,
+                            final response = await requestsWebServices.sendPostRequest(WSConstantes.RECOVERRY_PASSWORD, body);
 
-                            WSConstantes.TOKENID: WSConstantes.TOKEN
-                          };
+                            final decodedResponse = jsonDecode(response);
 
-                          final response = await requestsWebServices.sendPostRequest(WSConstantes.RECOVERRY_PASSWORD, body);
+                            if (decodedResponse is List && decodedResponse.isNotEmpty) {
+                              final userResponse = decodedResponse[0];
+                              final status = userResponse['status'];
+                              final message = userResponse['msg'];
 
-                          final decodedResponse = jsonDecode(response);
+                              if (status == '01') {
 
-                          if (decodedResponse is List && decodedResponse.isNotEmpty) {
-                            final userResponse = decodedResponse[0];
-                            final status = userResponse['status'];
-                            final message = userResponse['msg'];
-
-                            if (status == '01') {
-
-                              setState(() {
-                                Fluttertoast.showToast(
-                                  msg: message,
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                );
-                              });
-
-                              Navigator.pop(context);
-                            } else if (status == '02') {
-
-                              //Coloca TOAST
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text('Erro de autenticação'),
-                                    content: Text(message),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: Text('OK'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
+                                setState(() {
+                                  Fluttertoast.showToast(
+                                    msg: message,
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
                                   );
-                                },
-                              );
+                                });
+
+                                Navigator.pop(context);
+                              } else if (status == '02') {
+
+                                //Coloca TOAST
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Erro de autenticação'),
+                                      content: Text(message),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text('OK'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Erro'),
+                                      content: Text('Ocorreu um erro durante o login.'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text('OK'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
                             } else {
                               showDialog(
                                 context: context,
@@ -142,7 +173,9 @@ class _DialogRecoveryPasswordState extends State<DialogRecoveryPassword> {
                                 },
                               );
                             }
-                          } else {
+                          } catch (e) {
+
+                            print('Erro durante a requisição: $e');
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -160,30 +193,16 @@ class _DialogRecoveryPasswordState extends State<DialogRecoveryPassword> {
                                 );
                               },
                             );
+                          }finally{
+                            setState(() {
+                              isLoading = false;
+                            });
                           }
-                        } catch (e) {
-
-                          print('Erro durante a requisição: $e');
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Erro'),
-                                content: Text('Ocorreu um erro durante o login.'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
                         }
                       },
-                      child: Text(
+                      child:  isLoading
+                          ? CircularProgressIndicator(color: MyColors.grayLite, strokeWidth: 3,)
+                          :  Text(
                         "REDEFINIR SENHA",
                         style: TextStyle(
                             color: MyColors.colorOnPrimary,

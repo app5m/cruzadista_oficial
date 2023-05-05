@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:cruzadista/components/colors.dart';
 import 'package:cruzadista/components/fonte_size.dart';
 import 'package:flutter/material.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../components/alert_dialog_recovery_password.dart';
 import '../components/dialog_alert_error.dart';
 import '../config/constants.dart';
@@ -23,6 +24,11 @@ class _LoginState extends State<Login> {
   var _colorBtnRegistre = MyColors.gray;
   bool _screenLogin = false;
 
+  var maskFormatter = new MaskTextInputFormatter(
+      mask: '(##) #####-####',
+      filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.lazy);
+
   //Aqui e para Login
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -34,9 +40,10 @@ class _LoginState extends State<Login> {
   TextEditingController _passwordRegistreController = TextEditingController();
   TextEditingController _coPasswordRegistreController = TextEditingController();
 
-  //Aqui para recuperar senha
-
-
+  //Botao com Progress
+  bool isLoadingLogin = false;
+  bool isLoadingRegistre = false;
+  bool validationTextField = false;
 
   final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
 
@@ -117,20 +124,10 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Por favor, preencha email valido';
-                              }else{
-                                bool emailValido = validationEmail(value!);
-                                if (!emailValido) {
-                                  return'O email é inválido!';
-                                }
-                              }
-
-                            },
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          child: TextField(
+                            keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: 'Email',
@@ -149,9 +146,10 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
+                            obscureText: true,
                             controller: _passwordController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -166,174 +164,209 @@ class _LoginState extends State<Login> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () async {
+                              setState(() {
+                                isLoadingLogin = true;
+                              });
+
                               Preferences.init();
                               final email = _emailController?.text.toString();
-                              final password = _passwordController?.text
-                                  .toString();
+                              final password =
+                                  _passwordController?.text.toString();
 
+                              if (validatonLogin(email!, password!)) {
+                                try {
+                                  final body = {
+                                    WSConstantes.EMAIL: email,
+                                    WSConstantes.PASSWORD: password,
+                                    WSConstantes.TOKENID: WSConstantes.TOKEN
+                                  };
 
-                              try {
-                                final body = {
-                                  WSConstantes.EMAIL: email,
-                                  WSConstantes.PASSWORD: password,
-                                  WSConstantes.TOKENID: WSConstantes.TOKEN
-                                };
+                                  final response =
+                                      await requestsWebServices.sendPostRequest(
+                                          WSConstantes.LOGIN, body);
 
-                                final response = await requestsWebServices
-                                    .sendPostRequest(WSConstantes.LOGIN, body);
+                                  final decodedResponse = jsonDecode(response);
 
-                                final decodedResponse = jsonDecode(response);
+                                  if (decodedResponse is List &&
+                                      decodedResponse.isNotEmpty) {
+                                    final userResponse = decodedResponse[0];
+                                    final status = userResponse['status'];
+                                    final message = userResponse['msg'];
 
-                                if (decodedResponse is List &&
-                                    decodedResponse.isNotEmpty) {
-                                  final userResponse = decodedResponse[0];
-                                  final status = userResponse['status'];
-                                  final message = userResponse['msg'];
+                                    if (status == '01') {
+                                      final userId = userResponse['id'];
+                                      final name = userResponse['nome'];
+                                      final email = userResponse['email'];
+                                      final phone = userResponse['celular'];
 
-                                  if (status == '01') {
-                                    final userId = userResponse['id'];
-                                    final name = userResponse['nome'];
-                                    final email = userResponse['email'];
-                                    final phone = userResponse['celular'];
+                                      final user = User(
+                                        user_id: userId,
+                                        name: name,
+                                        email: email,
+                                        cellphone: phone,
+                                      );
 
-                                    final user = User(
-                                      user_id: userId,
-                                      name: name,
-                                      email: email,
-                                      cellphone: phone,
-                                    );
+                                      await Preferences.setUserData(user);
+                                      await Preferences.setLogin(true);
 
-                                    await Preferences.setUserData(user);
-                                    await Preferences.setLogin(true);
-
-                                    Navigator.pushNamed(context, '/ui/home');
-                                  } else if (status == '02') {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogError(title: "Atenção!",
+                                      Navigator.pushNamed(context, '/ui/home');
+                                    } else if (status == '02') {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogError(
+                                            title: "Atenção!",
                                             content: message,
                                             btnConfirm: TextButton(
                                                 style: TextButton.styleFrom(
-                                                    foregroundColor: MyColors
-                                                        .colorPrimary),
+                                                    foregroundColor:
+                                                        MyColors.colorPrimary),
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                 },
                                                 child: Text(
-                                                  'Voltar', style: TextStyle(
-                                                  fontSize: FontSizes.subTitulo,
-                                                  fontWeight: FontWeight.w600,
-                                                  fontFamily: 'Poppins',
-                                                ),
-                                                )
-                                            ),);
-                                      },
-                                    );
-                                  }else if (status == '03') {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogError(title: "Atenção!",
+                                                  'Voltar',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        FontSizes.subTitulo,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                )),
+                                          );
+                                        },
+                                      );
+                                    } else if (status == '03') {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogError(
+                                            title: "Atenção!",
                                             content: message,
                                             btnConfirm: TextButton(
                                                 style: TextButton.styleFrom(
-                                                    foregroundColor: MyColors
-                                                        .colorPrimary),
+                                                    foregroundColor:
+                                                        MyColors.colorPrimary),
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                 },
                                                 child: Text(
-                                                  'Voltar', style: TextStyle(
-                                                  fontSize: FontSizes.subTitulo,
-                                                  fontWeight: FontWeight.w600,
-                                                  fontFamily: 'Poppins',
-                                                ),
-                                                )
-                                            ),);
-                                      },
-                                    );
+                                                  'Voltar',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        FontSizes.subTitulo,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                )),
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogError(
+                                            title: "Atenção!",
+                                            content:
+                                                "Ocorreu um erro durante o login.",
+                                            btnConfirm: TextButton(
+                                                style: TextButton.styleFrom(
+                                                    foregroundColor:
+                                                        MyColors.colorPrimary),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text(
+                                                  'Voltar',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        FontSizes.subTitulo,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                )),
+                                          );
+                                        },
+                                      );
+                                    }
                                   } else {
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        return DialogError(title: "Atenção!",
-                                          content: "Ocorreu um erro durante o login.",
+                                        return DialogError(
+                                          title: "Atenção!",
+                                          content:
+                                              "Ocorreu um erro durante o login.",
                                           btnConfirm: TextButton(
                                               style: TextButton.styleFrom(
-                                                  foregroundColor: MyColors
-                                                      .colorPrimary),
+                                                  foregroundColor:
+                                                      MyColors.colorPrimary),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
                                               child: Text(
-                                                'Voltar', style: TextStyle(
-                                                fontSize: FontSizes.subTitulo,
-                                                fontWeight: FontWeight.w600,
-                                                fontFamily: 'Poppins',
-                                              ),
-                                              )
-                                          ),);
+                                                'Voltar',
+                                                style: TextStyle(
+                                                  fontSize: FontSizes.subTitulo,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                              )),
+                                        );
                                       },
                                     );
                                   }
-                                } else {
+                                } catch (e) {
+                                  print('Erro durante a requisição: $e');
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return DialogError(title: "Atenção!",
-                                        content: "Ocorreu um erro durante o login.",
+                                      return DialogError(
+                                        title: "Atenção!",
+                                        content:
+                                            "Erro durante a requisição: $e",
                                         btnConfirm: TextButton(
                                             style: TextButton.styleFrom(
-                                                foregroundColor: MyColors
-                                                    .colorPrimary),
+                                                foregroundColor:
+                                                    MyColors.colorPrimary),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
                                             child: Text(
-                                              'Voltar', style: TextStyle(
-                                              fontSize: FontSizes.subTitulo,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'Poppins',
-                                            ),
-                                            )
-                                        ),);
+                                              'Voltar',
+                                              style: TextStyle(
+                                                fontSize: FontSizes.subTitulo,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'Poppins',
+                                              ),
+                                            )),
+                                      );
                                     },
                                   );
+                                } finally {
+                                  setState(() {
+                                    isLoadingLogin = false;
+                                  });
                                 }
-                              } catch (e) {
-                                print('Erro durante a requisição: $e');
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return DialogError(title: "Atenção!",
-                                      content: "Erro durante a requisição: $e",
-                                      btnConfirm: TextButton(
-                                          style: TextButton.styleFrom(
-                                              foregroundColor: MyColors
-                                                  .colorPrimary),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text(
-                                            'Voltar', style: TextStyle(
-                                            fontSize: FontSizes.subTitulo,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Poppins',
-                                          ),
-                                          )
-                                      ),);
-                                  },
-                                );
+                              }else{
+                                setState(() {
+                                  isLoadingRegistre = false;
+                                });
                               }
                             },
-                            child: Text(
-                              "ENTRAR",
-                              style: TextStyle(
-                                  color: MyColors.colorOnPrimary,
-                                  fontFamily: 'Poppins',
-                                  fontSize: 16),
-                            ),
+                            child: isLoadingLogin
+                                ? CircularProgressIndicator(
+                                    color: MyColors.grayLite,
+                                    strokeWidth: 3,
+                                  )
+                                : Text(
+                                    "ENTRAR",
+                                    style: TextStyle(
+                                        color: MyColors.colorOnPrimary,
+                                        fontFamily: 'Poppins',
+                                        fontSize: 16),
+                                  ),
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all<
                                   RoundedRectangleBorder>(
@@ -373,8 +406,7 @@ class _LoginState extends State<Login> {
                                     fontSize: FontSizes.textoNormal,
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w500),
-                              )
-                          ),
+                              )),
                         ],
                       ),
                     ],
@@ -391,8 +423,8 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
                             controller: _nameRegistreController,
                             decoration: InputDecoration(
@@ -412,9 +444,10 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
+                            keyboardType: TextInputType.emailAddress,
                             controller: _emailRegistreController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -433,9 +466,10 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
+                            inputFormatters: [maskFormatter],
                             controller: _celularRegistreController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -454,9 +488,10 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
+                            obscureText: true,
                             controller: _passwordRegistreController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -475,9 +510,10 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
+                            obscureText: true,
                             controller: _coPasswordRegistreController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -501,210 +537,210 @@ class _LoginState extends State<Login> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () async {
+                              setState(() {
+                                isLoadingRegistre = true;
+                              });
                               Preferences.init();
-                              final nameRegistre = _nameRegistreController?.text
-                                  .toString();
-                              final emailRegistre = _emailRegistreController
-                                  ?.text.toString();
-                              final phoneRegistre = _celularRegistreController
-                                  ?.text.toString();
-                              final passwordRegistre = _passwordRegistreController
-                                  ?.text.toString();
-                              final coPasswordRegistre = _coPasswordRegistreController
-                                  ?.text.toString();
-                              var passwordFinal = '';
-
-                              if (passwordRegistre == coPasswordRegistre) {
-                                passwordFinal = passwordRegistre!;
-                              } else {
-                                // Senhas não correspondem, exibir AlertDialog
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text('Erro'),
-                                      content: Text(
-                                          'As senhas não correspondem.'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: Text('OK'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
+                              final nameRegistre = _nameRegistreController?.text.toString();
+                              final emailRegistre = _emailRegistreController?.text.toString();
+                              final phoneRegistre = _celularRegistreController?.text.toString();
+                              final passwordRegistre = _passwordRegistreController?.text.toString();
+                              final coPasswordRegistre = _coPasswordRegistreController?.text.toString();
 
 
-                              try {
-                                final body = {
-                                  WSConstantes.NAME: nameRegistre,
-                                  WSConstantes.EMAIL: emailRegistre,
-                                  WSConstantes.PHONE: phoneRegistre,
-                                  WSConstantes.PASSWORD: passwordFinal,
-                                  WSConstantes.TOKENID: WSConstantes.TOKEN
-                                };
+                              if(validatonRegistrer(nameRegistre!, emailRegistre!, phoneRegistre!, passwordRegistre!, coPasswordRegistre!)){
+                                try {
+                                  final body = {
+                                    WSConstantes.NAME: nameRegistre,
+                                    WSConstantes.EMAIL: emailRegistre,
+                                    WSConstantes.PHONE: phoneRegistre,
+                                    WSConstantes.PASSWORD: passwordRegistre,
+                                    WSConstantes.TOKENID: WSConstantes.TOKEN
+                                  };
 
-                                final response = await requestsWebServices
-                                    .sendPostRequest(
-                                    WSConstantes.REGISTRER, body);
+                                  final response =
+                                  await requestsWebServices.sendPostRequest(
+                                      WSConstantes.REGISTRER, body);
 
-                                final decodedResponse = jsonDecode(response);
+                                  final decodedResponse = jsonDecode(response);
 
-                                if (decodedResponse is List &&
-                                    decodedResponse.isNotEmpty) {
-                                  final userResponse = decodedResponse[0];
-                                  final status = userResponse['status'];
-                                  final message = userResponse['msg'];
+                                  if (decodedResponse is List &&
+                                      decodedResponse.isNotEmpty) {
+                                    final userResponse = decodedResponse[0];
+                                    final status = userResponse['status'];
+                                    final message = userResponse['msg'];
 
-                                  if (status == '01') {
-                                    final userId = userResponse['id'];
-                                    final name = userResponse['nome'];
-                                    final email = userResponse['email'];
-                                    final phone = userResponse['celular'];
+                                    if (status == '01') {
+                                      final userId = userResponse['id'];
+                                      final name = userResponse['nome'];
+                                      final email = userResponse['email'];
+                                      final phone = userResponse['celular'];
 
-                                    final user = User(
-                                      user_id: userId,
-                                      name: name,
-                                      email: email,
-                                      cellphone: phone,
-                                    );
+                                      final user = User(
+                                        user_id: userId,
+                                        name: name,
+                                        email: email,
+                                        cellphone: phone,
+                                      );
 
-                                    await Preferences.setUserData(user);
-                                    await Preferences.setLogin(true);
+                                      await Preferences.setUserData(user);
+                                      await Preferences.setLogin(true);
 
-                                    Navigator.pushNamed(context, '/ui/home');
-
-                                  } else if (status == '02') {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogError(title: "Atenção!",
-                                          content: message,
-                                          btnConfirm: TextButton(
-                                              style: TextButton.styleFrom(
-                                                  foregroundColor: MyColors
-                                                      .colorPrimary),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text(
-                                                'Voltar', style: TextStyle(
-                                                fontSize: FontSizes.subTitulo,
-                                                fontWeight: FontWeight.w600,
-                                                fontFamily: 'Poppins',
-                                              ),
-                                              )
-                                          ),);
-                                      },
-                                    );
-                                  }else if (status == '03') {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogError(title: "Atenção!",
-                                          content: message,
-                                          btnConfirm: TextButton(
-                                              style: TextButton.styleFrom(
-                                                  foregroundColor: MyColors
-                                                      .colorPrimary),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text(
-                                                'Voltar', style: TextStyle(
-                                                fontSize: FontSizes.subTitulo,
-                                                fontWeight: FontWeight.w600,
-                                                fontFamily: 'Poppins',
-                                              ),
-                                              )
-                                          ),);
-                                      },
-                                    );
+                                      Navigator.pushNamed(context, '/ui/home');
+                                    } else if (status == '02') {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogError(
+                                            title: "Atenção!",
+                                            content: message,
+                                            btnConfirm: TextButton(
+                                                style: TextButton.styleFrom(
+                                                    foregroundColor:
+                                                    MyColors.colorPrimary),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text(
+                                                  'Voltar',
+                                                  style: TextStyle(
+                                                    fontSize: FontSizes.subTitulo,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                )),
+                                          );
+                                        },
+                                      );
+                                    } else if (status == '03') {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogError(
+                                            title: "Atenção!",
+                                            content: message,
+                                            btnConfirm: TextButton(
+                                                style: TextButton.styleFrom(
+                                                    foregroundColor:
+                                                    MyColors.colorPrimary),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text(
+                                                  'Voltar',
+                                                  style: TextStyle(
+                                                    fontSize: FontSizes.subTitulo,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                )),
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogError(
+                                            title: "Atenção!",
+                                            content:
+                                            "Ocorreu um erro durante o login.",
+                                            btnConfirm: TextButton(
+                                                style: TextButton.styleFrom(
+                                                    foregroundColor:
+                                                    MyColors.colorPrimary),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text(
+                                                  'Voltar',
+                                                  style: TextStyle(
+                                                    fontSize: FontSizes.subTitulo,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                )),
+                                          );
+                                        },
+                                      );
+                                    }
                                   } else {
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        return DialogError(title: "Atenção!",
-                                          content: "Ocorreu um erro durante o login.",
+                                        return DialogError(
+                                          title: "Atenção!",
+                                          content:
+                                          "Ocorreu um erro durante o login.",
                                           btnConfirm: TextButton(
                                               style: TextButton.styleFrom(
-                                                  foregroundColor: MyColors
-                                                      .colorPrimary),
+                                                  foregroundColor:
+                                                  MyColors.colorPrimary),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
                                               child: Text(
-                                                'Voltar', style: TextStyle(
-                                                fontSize: FontSizes.subTitulo,
-                                                fontWeight: FontWeight.w600,
-                                                fontFamily: 'Poppins',
-                                              ),
-                                              )
-                                          ),);
+                                                'Voltar',
+                                                style: TextStyle(
+                                                  fontSize: FontSizes.subTitulo,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                              )),
+                                        );
                                       },
                                     );
                                   }
-                                } else {
+                                } catch (e) {
+                                  print('Erro durante a requisição: $e');
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return DialogError(title: "Atenção!",
-                                        content: "Ocorreu um erro durante o login.",
+                                      return DialogError(
+                                        title: "Atenção!",
+                                        content: "Erro durante a requisição: $e",
                                         btnConfirm: TextButton(
                                             style: TextButton.styleFrom(
-                                                foregroundColor: MyColors
-                                                    .colorPrimary),
+                                                foregroundColor:
+                                                MyColors.colorPrimary),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
                                             child: Text(
-                                              'Voltar', style: TextStyle(
-                                              fontSize: FontSizes.subTitulo,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'Poppins',
-                                            ),
-                                            )
-                                        ),);
+                                              'Voltar',
+                                              style: TextStyle(
+                                                fontSize: FontSizes.subTitulo,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'Poppins',
+                                              ),
+                                            )),
+                                      );
                                     },
                                   );
+                                } finally {
+                                  setState(() {
+                                    isLoadingRegistre = false;
+                                  });
                                 }
-                              } catch (e) {
-                                print('Erro durante a requisição: $e');
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return DialogError(title: "Atenção!",
-                                      content: "Erro durante a requisição: $e",
-                                      btnConfirm: TextButton(
-                                          style: TextButton.styleFrom(
-                                              foregroundColor: MyColors
-                                                  .colorPrimary),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text(
-                                            'Voltar', style: TextStyle(
-                                            fontSize: FontSizes.subTitulo,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Poppins',
-                                          ),
-                                          )
-                                      ),);
-                                  },
-                                );
+                              }else{
+                                setState(() {
+                                  isLoadingRegistre = false;
+                                });
                               }
+
                             },
-                            child: Text(
-                              "CADASTRA-SE",
-                              style: TextStyle(
-                                  color: MyColors.colorOnPrimary,
-                                  fontFamily: 'Poppins',
-                                  fontSize: 16),
-                            ),
+                            child: isLoadingRegistre
+                                ? CircularProgressIndicator(
+                                    color: MyColors.grayLite,
+                                    strokeWidth: 3,
+                                  ) // ou qualquer indicador de carregamento desejado
+                                : Text(
+                                    "CADASTRA-SE",
+                                    style: TextStyle(
+                                        color: MyColors.colorOnPrimary,
+                                        fontFamily: 'Poppins',
+                                        fontSize: 16),
+                                  ),
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all<
                                   RoundedRectangleBorder>(
@@ -729,11 +765,97 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-  bool validationEmail(String email) {
-    // Expressão regular para verificar o formato do email
-    final regex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
 
-    return regex.hasMatch(email);
+  bool validatonLogin(String email, String password) {
+    bool validation = false;
+    if (!validationEmail(email)) {
+      setState(() {
+        Fluttertoast.showToast(
+          msg: WSConstantes.MSG_EMAIL_INVALIDO,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        isLoadingLogin = false;
+        validation = false;
+      });
+    } else if (password.isEmpty || password.length < 6) {
+      setState(() {
+        Fluttertoast.showToast(
+          msg: WSConstantes.MSG_PASSWORD_INVALIDO,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        isLoadingLogin = false;
+        validation = false;
+      });
+    } else {
+      validation = true;
+    }
+
+    return validation;
   }
 
+  bool validatonRegistrer(String name, String email, String phone, String password, String coPassword ){
+    bool validation = false;
+    if(name.isEmpty){
+      setState(() {
+        Fluttertoast.showToast(
+          msg: WSConstantes.MSG_NOME_INVALIDO,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        isLoadingLogin = false;
+        validation = false;
+      });
+    } else if (!validationEmail(email)) {
+      setState(() {
+        Fluttertoast.showToast(
+          msg: WSConstantes.MSG_EMAIL_INVALIDO,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        isLoadingLogin = false;
+        validation = false;
+      });
+    } else if (phone.isEmpty) {
+      setState(() {
+        Fluttertoast.showToast(
+          msg: WSConstantes.MSG_PHONE_INVALIDO,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        isLoadingLogin = false;
+        validation = false;
+      });
+    } else if (password.isEmpty || password.length < 6) {
+      setState(() {
+        Fluttertoast.showToast(
+          msg: WSConstantes.MSG_PASSWORD_INVALIDO,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        isLoadingLogin = false;
+        validation = false;
+      });
+    } else if (coPassword != password) {
+      setState(() {
+        Fluttertoast.showToast(
+          msg: WSConstantes.MSG_CO_PASSWORD_INVALIDO,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        isLoadingLogin = false;
+        validation = false;
+      });
+    } else {
+      validation = true;
+    }
+
+    return validation;
+  }
+
+  bool validationEmail(String email) {
+    final regex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+    return regex.hasMatch(email);
+  }
 }
