@@ -1,4 +1,4 @@
-package br.com.app5m.cruzadista.cruzadista
+package br.com.cruzadista
 
 import io.flutter.embedding.android.FlutterActivity
 
