@@ -8,13 +8,15 @@ class WSConstantes {
   static const String URL_CARRINHO = URL + "uploads/orcamentos/";
 
 
-  static const String FCM_TYPE = "1";
+  static const String FCM_TYPE_ANDROID = "1";
+  static const String FCM_TYPE_IOS = "2";
   static const String TOKEN = "3V5B2vSs";
   /**:::Requests:::**/
   static const String LOGIN = "usuarios/login";
   static const String REGISTRER = "usuarios/cadastro";
   static const String PERFIL_USER = "usuarios/perfil/";
   static const String RECOVERRY_PASSWORD = "usuarios/recuperarsenha";
+  static const String SAVE_FCM = "usuarios/savefcm";
 
   /**:::Body:::**/
   static const String EMAIL = "email";
@@ -33,5 +35,11 @@ class WSConstantes {
   static const String MSG_PASSWORD_INVALIDO = 'A senha deve ter pelo menos 6 caracteres';
   static const String MSG_PHONE_INVALIDO = 'Celular inválido, tente novamente';
   static const String MSG_CO_PASSWORD_INVALIDO = 'As senhas fornecidas não são idênticas, por favor, verifique-as e tente novamente';
+
+  /**:::INICIA FIREBASE NO IOS:::**/
+  static const String API_KEY = 'AIzaSyC29OHcYG-evZDs1_POKS7yjI_eZlWCsDk';
+  static const String APP_ID = '1:85702348718:android:b34cc14ebc3330a05d823f';
+  static const String MESSGING_SENDER_ID = '85702348718';
+  static const String PROJECT_ID = 'cruzadista-eb3ab';
 
 }

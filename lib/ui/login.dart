@@ -200,7 +200,7 @@ class _LoginState extends State<Login> {
                                       final phone = userResponse['celular'];
 
                                       final user = User(
-                                        user_id: userId,
+                                        id: userId,
                                         name: name,
                                         email: email,
                                         cellphone: phone,
@@ -577,7 +577,7 @@ class _LoginState extends State<Login> {
                                       final phone = userResponse['celular'];
 
                                       final user = User(
-                                        user_id: userId,
+                                        id: userId,
                                         name: name,
                                         email: email,
                                         cellphone: phone,

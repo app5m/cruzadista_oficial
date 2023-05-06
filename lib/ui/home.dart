@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:cruzadista/components/fonte_size.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../components/alert_dialog_dific.dart';
 import '../components/colors.dart';
+import '../config/constants.dart';
+import '../config/preferences.dart';
+import '../config/requests.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -13,6 +19,51 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  var nameUser = 'Joao Victor';
+  final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  Future<String?> getFCM() async {
+    await Preferences.init();
+    String? savedFcmToken = await Preferences.getInstanceTokenFcm();
+    //nameUser = (await Preferences.getUserData()!.name)!;
+    String? currentFcmToken = await _firebaseMessaging.getToken();
+    if (savedFcmToken != null && savedFcmToken == currentFcmToken) {
+      print('FCM: não salvou');
+      return savedFcmToken;
+    }
+    var _userId = await Preferences.getUserData()!.id;
+    var _type = '';
+    if (Platform.isAndroid) {
+      _type = WSConstantes.FCM_TYPE_ANDROID;
+    } else if (Platform.isIOS) {
+      _type = WSConstantes.FCM_TYPE_IOS;
+    }
+    final body = {
+      WSConstantes.ID_USER: _userId,
+      WSConstantes.TYPE: _type,
+      WSConstantes.REGIST_ID: currentFcmToken,
+      WSConstantes.TOKENID: WSConstantes.TOKEN
+    };
+    final response = await requestsWebServices.sendPostRequest(WSConstantes.SAVE_FCM, body);
+
+    print('FCM: $currentFcmToken');
+    print('RESPOSTA: $response');
+
+    // Salvamos o FCM atual nas preferências.
+    await Preferences.saveInstanceTokenFcm("token",currentFcmToken!);
+
+    return currentFcmToken;
+  }
+  @override
+  void initState() {
+    super.initState();
+    getFCM();
+
+    //  _loadCryptoData();
+  }
+
   List<String> _tabs = ['Pendentes', 'Finalizadas'];
   int _selectedIndex = 0;
   final List<CrossWordL> crossWords = [
@@ -100,7 +151,7 @@ class _HomeState extends State<Home> {
                   Padding(
                     padding: const EdgeInsets.only(left: 16),
                     child: Text(
-                      'Olá,\nJoão Victor',
+                      'Olá,\n$nameUser',
                       style: TextStyle(
                           fontSize: FontSizes.titulo,
                           fontWeight: FontWeight.w500),

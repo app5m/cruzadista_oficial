@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "85702348718",
+    "project_id": "cruzadista-eb3ab",
+    "storage_bucket": "cruzadista-eb3ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85702348718:android:b34cc14ebc3330a05d823f",
+        "android_client_info": {
+          "package_name": "br.com.cruzadista"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "85702348718-7gfre7es3kmaqqvf5hg8pl06ba7efil3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC29OHcYG-evZDs1_POKS7yjI_eZlWCsDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "85702348718-7gfre7es3kmaqqvf5hg8pl06ba7efil3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

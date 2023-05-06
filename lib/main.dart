@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:cruzadista/config/constants.dart';
 import 'package:cruzadista/ui/game.dart';
 import 'package:cruzadista/ui/home.dart';
 import 'package:cruzadista/ui/login.dart';
@@ -7,6 +10,8 @@ import 'package:cruzadista/ui/my_profile.dart';
 import 'package:cruzadista/ui/onboarding.dart';
 import 'package:cruzadista/ui/splash.dart';
 import 'package:cruzadista/ui/update_password.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'config/preferences.dart';
@@ -15,7 +20,40 @@ main() async {
   var theme = ThemeMode.light;
   WidgetsFlutterBinding.ensureInitialized(); // Garante a inicialização do Flutter
 
-  await Preferences.init(); // Inicializa as SharedPreferences
+  await Preferences.init();
+
+  if(Platform.isAndroid){
+    await Firebase.initializeApp();
+  }else{
+    await Firebase.initializeApp(
+        options: FirebaseOptions(
+          apiKey: WSConstantes.API_KEY,
+          appId: WSConstantes.APP_ID,
+          messagingSenderId: WSConstantes.MESSGING_SENDER_ID,
+          projectId: WSConstantes.PROJECT_ID,
+        )
+    );
+  }
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Mensagem recebida: ${message.notification!.title}');
+  });
+
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    print('Mensagem aberta: ${message.notification!.title}');
+  });
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData.light(),
@@ -41,4 +79,7 @@ main() async {
       // '/ui/menu': (context) => Menu(),
     },
   ));
+}
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print('Mensagem recebida em segundo plano: ${message.notification!.title}');
 }
