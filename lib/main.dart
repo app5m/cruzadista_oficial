@@ -25,14 +25,7 @@ main() async {
   if(Platform.isAndroid){
     await Firebase.initializeApp();
   }else{
-    await Firebase.initializeApp(
-        options: FirebaseOptions(
-          apiKey: WSConstantes.API_KEY,
-          appId: WSConstantes.APP_ID,
-          messagingSenderId: WSConstantes.MESSGING_SENDER_ID,
-          projectId: WSConstantes.PROJECT_ID,
-        )
-    );
+    await Firebase.initializeApp();
   }
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
