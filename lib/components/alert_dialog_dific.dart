@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
 
+import '../ui/home.dart';
 import 'colors.dart';
 import 'fonte_size.dart';
 
 class DialogDific extends StatelessWidget {
+  late final Function(int, int) onDifficultySelected;
+  late int screenType;
+  int typeEsay = 1;
+  int typeMedium = 2;
+  int typeDific = 3;
+  int type = 1;
+
+  DialogDific({required this.screenType, required this.onDifficultySelected});
+
+
+
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
@@ -42,6 +54,12 @@ class DialogDific extends StatelessWidget {
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
+                  if(screenType == 0){
+                    type = 1;
+                  }else{
+                    type = 2;
+                  }
+                  onDifficultySelected(type, typeEsay);
                   Navigator.of(context).pop();
                 },
                 child: Text('Fácil',
@@ -64,6 +82,12 @@ class DialogDific extends StatelessWidget {
               SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () {
+                  if(screenType == 0){
+                    type = 1;
+                  }else{
+                    type = 2;
+                  }
+                  onDifficultySelected(type, typeMedium);
                   Navigator.of(context).pop();
                 },
                 child: Text('Médio',
@@ -86,6 +110,12 @@ class DialogDific extends StatelessWidget {
               SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () {
+                  if(screenType == 0){
+                    type = 1;
+                  }else{
+                    type = 2;
+                  }
+                  onDifficultySelected(type, typeDific);
                   Navigator.of(context).pop();
                 },
                 child: Text('Difícil',

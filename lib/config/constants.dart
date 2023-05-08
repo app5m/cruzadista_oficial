@@ -17,6 +17,8 @@ class WSConstantes {
   static const String PERFIL_USER = "usuarios/perfil/";
   static const String RECOVERRY_PASSWORD = "usuarios/recuperarsenha";
   static const String SAVE_FCM = "usuarios/savefcm";
+  static const String STATISTICS = "cruzadas/estatisticas";
+  static const String LIST_CRUZADISTA = "cruzadas/listCruzadas";
 
   /**:::Body:::**/
   static const String EMAIL = "email";
@@ -27,6 +29,7 @@ class WSConstantes {
   static const String TYPE = "type";
   static const String REGIST_ID = "registration_id";
   static const String ID = "id";
+  static const String ID_NIVEL = "id_nivel";
   static const String TOKENID = "token";
 
   /**:::Validações:::**/

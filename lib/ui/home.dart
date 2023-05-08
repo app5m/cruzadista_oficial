@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cruzadista/components/fonte_size.dart';
+import 'package:cruzadista/model/cruzada.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,6 +12,7 @@ import '../components/colors.dart';
 import '../config/constants.dart';
 import '../config/preferences.dart';
 import '../config/requests.dart';
+import '../model/user.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -19,8 +22,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   var nameUser = 'Joao Victor';
+  var avatarUser = '';
+  var dific = '';
+
+  String? totalValue = '';
+  String? finalizadasValue = '';
+  String? pendentesValue = '';
+  bool _listTyper = false;
+  bool _dificScreen = false;
+
+  final List<CrossWordL> crossWords = [];
+  final List<CrossWordL> crossWordsFinalizadas = [];
+
   final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
@@ -46,97 +60,149 @@ class _HomeState extends State<Home> {
       WSConstantes.REGIST_ID: currentFcmToken,
       WSConstantes.TOKENID: WSConstantes.TOKEN
     };
-    final response = await requestsWebServices.sendPostRequest(WSConstantes.SAVE_FCM, body);
+    final response =
+        await requestsWebServices.sendPostRequest(WSConstantes.SAVE_FCM, body);
 
     print('FCM: $currentFcmToken');
     print('RESPOSTA: $response');
 
     // Salvamos o FCM atual nas preferências.
-    await Preferences.saveInstanceTokenFcm("token",currentFcmToken!);
+    await Preferences.saveInstanceTokenFcm("token", currentFcmToken!);
 
     return currentFcmToken;
   }
+
+  Future<String?> getUserData() async {
+    await Preferences.init();
+    var _userId = await Preferences.getUserData()!.id;
+    final body = {
+      WSConstantes.ID: _userId,
+      WSConstantes.TOKENID: WSConstantes.TOKEN
+    };
+
+    final response = await requestsWebServices.sendPostRequest(
+        WSConstantes.PERFIL_USER, body);
+    final decodedResponse = jsonDecode(response);
+    if (decodedResponse.isNotEmpty) {
+      final user = User();
+      user.id = decodedResponse['id'];
+      user.name = decodedResponse['nome'];
+      user.avatar = decodedResponse['avatar'];
+
+      setState(() {
+        nameUser = user.name!;
+        avatarUser = WSConstantes.URL_AVATAR + user.avatar!;
+      });
+
+      print(
+          'meu id ${user.id}, meu nome: ${user.name}, avatar: ${user.avatar}');
+    }
+    getStatistics();
+  }
+
+  Future<void> getStatistics() async {
+    try {
+      await Preferences.init();
+      final userId = Preferences.getUserData()?.id;
+      final body = {
+        WSConstantes.ID: userId,
+        WSConstantes.TOKENID: WSConstantes.TOKEN
+      };
+
+      //final Map<String, dynamic> decodedResponse = await requestsWebServices.sendPostRequestList(WSConstantes.STATISTICS, body);
+      final List<dynamic> decodedResponse = await requestsWebServices
+          .sendPostRequestList(WSConstantes.STATISTICS, body);
+      if (decodedResponse.isNotEmpty) {
+        final cruzada = Cruzada();
+        cruzada.total = decodedResponse[0]['total']['rows'];
+        cruzada.finalizadas = decodedResponse[0]['finalizadas']['rows'];
+        cruzada.pendentes = decodedResponse[0]['pendentes']['rows'];
+        print(
+            "total: ${cruzada.total}  finalizadas: ${cruzada.finalizadas}  Pendentes: ${cruzada.pendentes}");
+        setState(() {
+          totalValue = cruzada.total.toString();
+          finalizadasValue = cruzada.finalizadas.toString();
+          pendentesValue = cruzada.pendentes.toString();
+        });
+      } else {
+        print('NULO');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> getListCruazadist(int type, int idNivel) async {
+    try {
+      await Preferences.init();
+      final userId = Preferences.getUserData()?.id;
+
+      if (!_listTyper) {
+        final body = {
+          WSConstantes.ID: userId,
+          WSConstantes.TYPE: type,
+          WSConstantes.ID_NIVEL: idNivel,
+          WSConstantes.TOKENID: WSConstantes.TOKEN
+        };
+        final List<dynamic> decodedResponse = await requestsWebServices
+            .sendPostRequestList(WSConstantes.LIST_CRUZADISTA, body);
+        if (decodedResponse.isNotEmpty) {
+          setState(() {
+            crossWords.clear();
+            for (final item in decodedResponse) {
+              final crossWord = CrossWordL(
+                item['nome'], // nome do item da API
+                'images/logoadapter.png', // url do item da API
+              );
+              crossWords.add(crossWord);
+            }
+          });
+        } else {
+          print('NULO');
+        }
+      } else {
+        final body = {
+          WSConstantes.ID: userId,
+          WSConstantes.TYPE: type,
+          WSConstantes.ID_NIVEL: idNivel,
+          WSConstantes.TOKENID: WSConstantes.TOKEN
+        };
+        final List<dynamic> decodedResponse = await requestsWebServices
+            .sendPostRequestList(WSConstantes.LIST_CRUZADISTA, body);
+        if (decodedResponse.isNotEmpty) {
+          setState(() {
+            crossWords.clear();
+            for (final item in decodedResponse) {
+              final crossWord = CrossWordL(
+                item['nome'], // nome do item da API
+                'images/logoadapter.png', // url do item da API
+              );
+              crossWords.add(crossWord);
+            }
+          });
+        } else {
+          print('NULO');
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     getFCM();
-
-    //  _loadCryptoData();
+    getUserData();
+    getListCruazadist(1, 0);
   }
 
   List<String> _tabs = ['Pendentes', 'Finalizadas'];
   int _selectedIndex = 0;
-  final List<CrossWordL> crossWords = [
-    CrossWordL(
-      'Podcast 1',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 2',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 3',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 4',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 5',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 6',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 7',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 8',
-      'images/logoadapter.png',
-    ),
-  ];
-  final List<CrossWordL> crossWords2 = [
-    CrossWordL(
-      'Podcast 9',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 10',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 11',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 12',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 13',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 14',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 15',
-      'images/logoadapter.png',
-    ),
-    CrossWordL(
-      'Podcast 16',
-      'images/logoadapter.png',
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
+    print(avatarUser);
     return Scaffold(
       backgroundColor: MyColors.colorOnPrimary,
       body: Padding(
@@ -159,44 +225,46 @@ class _HomeState extends State<Home> {
                   ),
                   Spacer(),
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       Navigator.pushNamed(context, "/ui/menu");
                     },
                     //avatar.png
                     child: Material(
-                    elevation: 8,
-                    shape: CircleBorder(),
-                    child: CircleAvatar(
-                      backgroundImage: ExactAssetImage('images/avatar.png'),
-                      radius: 30,
-                      backgroundColor: MyColors.grayLite,
+                      elevation: 8,
+                      shape: CircleBorder(),
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(avatarUser),
+
+                        // ExactAssetImage('images/avatar.png'),
+                        radius: 30,
+                        backgroundColor: MyColors.grayLite,
+                      ),
                     ),
-                  ),),
+                  ),
                   SizedBox(
                     width: 8,
                   ),
-                  InkWell(onTap: (){
-                    Navigator.pushNamed(context, "/ui/notification");
-
-                  },
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, "/ui/notification");
+                    },
                     child: Card(
-                    margin: EdgeInsets.all(0),
-                    // Define a margem do card como zero
-                    color: MyColors.colorOnPrimary,
-                    elevation: 8,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          bottomLeft: Radius.circular(16)),
+                      margin: EdgeInsets.all(0),
+                      // Define a margem do card como zero
+                      color: MyColors.colorOnPrimary,
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16),
+                            bottomLeft: Radius.circular(16)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SvgPicture.asset('icons/notification.svg'),
+                      ),
+                      borderOnForeground: false,
+                      clipBehavior: Clip.antiAlias,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SvgPicture.asset('icons/notification.svg'),
-                    ),
-                    borderOnForeground: false,
-                    clipBehavior: Clip
-                        .antiAlias,
-                  ),
                   ),
                 ],
               ),
@@ -207,6 +275,7 @@ class _HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
+                    width: 130,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -230,7 +299,7 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '15',
+                              totalValue!,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -239,10 +308,10 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                             Text(
-                              'Resolvidas',
+                              'Total',
                               style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 fontFamily: 'Poppins',
                               ),
@@ -253,6 +322,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   Container(
+                    width: 130,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -276,7 +346,7 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '15',
+                              finalizadasValue!,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -285,10 +355,10 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                             Text(
-                              'Melhor',
+                              'Finalizadas',
                               style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 fontFamily: 'Poppins',
                               ),
@@ -299,6 +369,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   Container(
+                    width: 130,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -317,12 +388,13 @@ class _HomeState extends State<Home> {
                       elevation: 8,
                       color: Colors.transparent,
                       child: Container(
+                        width: 130,
                         padding: EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '15',
+                              pendentesValue!,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -331,10 +403,10 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                             Text(
-                              'Média',
+                              'Pendentes',
                               style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 fontFamily: 'Poppins',
                               ),
@@ -351,42 +423,96 @@ class _HomeState extends State<Home> {
               ),
               Row(
                 children: [
-                  Spacer(),
-                  InkWell(onTap: (){
-                    showDialog(
-                      context: context,
-                      builder: (_) => DialogDific(),
-                    );
-                  },
+                  Visibility(visible: _dificScreen,
+                      child: InkWell(
+                    onTap: () {
+                      _dificScreen = false;
+                      if(_selectedIndex == 0){
+                        getListCruazadist(1, 0);
+                      }else{
+                        getListCruazadist(2, 0);
+                      }
+
+                    },
                     child: Card(
-                    margin: EdgeInsets.all(0),
-                    // Define a margem do card como zero
-                    color: MyColors.colorOnPrimary,
-                    elevation: 8,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          bottomLeft: Radius.circular(16)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            "Filtrar",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                          SvgPicture.asset('icons/filtro.svg'),
-                        ],
+                      margin: EdgeInsets.all(0),
+                      // Define a margem do card como zero
+                      color: MyColors.colorOnPrimary,
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(16),
+                            bottomRight: Radius.circular(16)),
                       ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              dific,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                            Icon(Icons.close, color: Colors.black,),
+                          ],
+                        ),
+                      ),
+                      borderOnForeground: false,
+                      clipBehavior: Clip.antiAlias,
                     ),
-                    borderOnForeground: false,
-                    clipBehavior: Clip
-                        .antiAlias,
-                  ),),
+                  )),
+                  Spacer(),
+                  InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => DialogDific(
+                          screenType: _selectedIndex,
+                          onDifficultySelected: (int type, int level) {
+                            getListCruazadist(type, level);
+                            _dificScreen = true;
+                            if(level == 1){
+                              dific = "Facil";
+                            }else if(level == 2){
+                              dific = "Medio";
+                            }else if(level == 2){
+                              dific = "Dificil";
+                            }
+                          },
+                        ),
+                      );
+                    },
+                    child: Card(
+                      margin: EdgeInsets.all(0),
+                      // Define a margem do card como zero
+                      color: MyColors.colorOnPrimary,
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16),
+                            bottomLeft: Radius.circular(16)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Filtrar",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                            SvgPicture.asset('icons/filtro.svg'),
+                          ],
+                        ),
+                      ),
+                      borderOnForeground: false,
+                      clipBehavior: Clip.antiAlias,
+                    ),
+                  ),
                 ],
               ),
               SizedBox(
@@ -399,6 +525,8 @@ class _HomeState extends State<Home> {
                     onTap: () {
                       setState(() {
                         _selectedIndex = 0;
+                        getListCruazadist(1, 0);
+                        _listTyper = false;
                       });
                     },
                     child: Column(
@@ -433,6 +561,8 @@ class _HomeState extends State<Home> {
                     onTap: () {
                       setState(() {
                         _selectedIndex = 1;
+                        getListCruazadist(2, 0);
+                        _listTyper = true;
                       });
                     },
                     child: Column(
@@ -468,7 +598,7 @@ class _HomeState extends State<Home> {
               if (_selectedIndex == 0)
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only( left: 16, right: 16),
+                    padding: const EdgeInsets.only(left: 16, right: 16),
                     child: GridView.count(
                       crossAxisCount: 2, // Define duas colunas
                       children: List.generate(crossWords.length, (index) {
@@ -481,11 +611,24 @@ class _HomeState extends State<Home> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16, right: 16),
-                    child: GridView.count(
-                      crossAxisCount: 2, // Define duas colunas
-                      children: List.generate(crossWords2.length, (index) {
-                        return MyCard(crossWordL: crossWords2[index]);
-                      }),
+                    child: LayoutBuilder(
+                      builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        if (crossWordsFinalizadas.isEmpty) {
+                          return Center(
+                            child: Text('Nenhum Jogo finalizado.'),
+                          );
+                        } else {
+                          return GridView.count(
+                            crossAxisCount: 2,
+                            children: List.generate(
+                                crossWordsFinalizadas.length, (index) {
+                              return MyCard(
+                                  crossWordL: crossWordsFinalizadas[index]);
+                            }),
+                          );
+                        }
+                      },
                     ),
                   ),
                 ),
@@ -513,7 +656,6 @@ class MyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-
         Navigator.pushNamed(context, "/ui/game");
       },
       child: Card(
