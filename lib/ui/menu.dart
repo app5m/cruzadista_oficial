@@ -93,7 +93,6 @@ class _MenuState extends State<Menu> {
                   ),
                   onTap: () {
                     Navigator.pushNamed(context, "/ui/myProfile");
-
                   },
                 ),
                 InkWell(
@@ -178,35 +177,36 @@ class _MenuState extends State<Menu> {
                       builder: (BuildContext context) {
                         return DialogGeneric(
                           title: 'Atenção!',
-                          content: 'Você tem certeza que deseja zera seu progesso?',
+                          content:
+                              'Você tem certeza que deseja zera seu progesso?',
                           btnBack: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: Text('Não', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Não',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                           btnConfirm: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: Text('Sim', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Sim',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                         );
                       },
                     );
@@ -255,35 +255,36 @@ class _MenuState extends State<Menu> {
                       builder: (BuildContext context) {
                         return DialogGeneric(
                           title: 'Atenção!',
-                          content: 'Você tem certeza que deseja deativar sua conta?',
+                          content:
+                              'Você tem certeza que deseja deativar sua conta?',
                           btnBack: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: Text('Não', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Não',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                           btnConfirm: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: Text('Sim', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Sim',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                         );
                       },
                     );
@@ -332,43 +333,43 @@ class _MenuState extends State<Menu> {
                       builder: (BuildContext context) {
                         return DialogGeneric(
                           title: 'Atenção!',
-                          content: 'Você tem certeza que deseja realizar seu logout?',
+                          content:
+                              'Você tem certeza que deseja realizar seu logout?',
                           btnBack: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: Text('Não', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Não',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                           btnConfirm: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
-                              onPressed: ()async {
-                               await Preferences.init();
-                               await Preferences.clearUserData();
-                               exit(0);
-                               // if(Platform.isAndroid){
-                               //   FlutterExitApp.exitApp();
-                               // }else{
-                               //   FlutterExitApp.exitApp(iosForceExit: true);
-                               // }
-
+                              onPressed: () async {
+                                await Preferences.init();
+                                await Preferences.clearUserData();
+                                SystemNavigator.pop();
+                                // if(Platform.isAndroid){
+                                //   FlutterExitApp.exitApp();
+                                // }else{
+                                //   FlutterExitApp.exitApp(iosForceExit: true);
+                                // }
                               },
-                              child: Text('Sim', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Sim',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                         );
                       },
                     );
