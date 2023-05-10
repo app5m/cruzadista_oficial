@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:cruzadista/components/alert_dialog_generic.dart';
 import 'package:cruzadista/components/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_svg/svg.dart';
 
 import '../components/fonte_size.dart';
@@ -350,8 +353,13 @@ class _MenuState extends State<Menu> {
                               onPressed: ()async {
                                await Preferences.init();
                                await Preferences.clearUserData();
+                               exit(0);
+                               // if(Platform.isAndroid){
+                               //   FlutterExitApp.exitApp();
+                               // }else{
+                               //   FlutterExitApp.exitApp(iosForceExit: true);
+                               // }
 
-                               SystemNavigator.pop();
                               },
                               child: Text('Sim', style: TextStyle(
                                 fontSize: FontSizes.subTitulo,
