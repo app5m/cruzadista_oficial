@@ -6,6 +6,7 @@ import 'package:cruzadista/model/cruzada.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lottie/lottie.dart';
 
 import '../components/alert_dialog_dific.dart';
 import '../components/colors.dart';
@@ -616,7 +617,24 @@ class _HomeState extends State<Home> {
                           (BuildContext context, BoxConstraints constraints) {
                         if (crossWordsFinalizadas.isEmpty) {
                           return Center(
-                            child: Text('Nenhum Jogo finalizado.'),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Lottie.asset('animation/empty.json',
+                                    repeat: true,
+                                    reverse: true,
+                                    animate: true,
+                                    width: 250,
+                                    height: 250),
+                                Text('Nenhuma cruzada encontrada',
+                                  style: TextStyle(
+                                    fontSize: FontSizes.subTitulo,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Poppins',
+                                  ),),
+                              ],
+                            ),
                           );
                         } else {
                           return GridView.count(

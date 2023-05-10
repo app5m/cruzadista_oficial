@@ -1,9 +1,11 @@
 import 'package:cruzadista/components/alert_dialog_generic.dart';
 import 'package:cruzadista/components/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../components/fonte_size.dart';
+import '../config/preferences.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
@@ -345,8 +347,11 @@ class _MenuState extends State<Menu> {
                           btnConfirm: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
-                              onPressed: () {
-                                Navigator.of(context).pop();
+                              onPressed: ()async {
+                               await Preferences.init();
+                               await Preferences.clearUserData();
+
+                               SystemNavigator.pop();
                               },
                               child: Text('Sim', style: TextStyle(
                                 fontSize: FontSizes.subTitulo,

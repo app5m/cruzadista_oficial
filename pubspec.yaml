@@ -44,6 +44,8 @@ dependencies:
   mask_text_input_formatter: ^2.4.0
   firebase_core: ^2.11.0
   firebase_messaging: ^14.5.0
+  lottie: ^1.1.0
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +91,8 @@ flutter:
     - icons/share.svg
     - icons/trash.svg
     - icons/user.svg
+
+    - animation/empty.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

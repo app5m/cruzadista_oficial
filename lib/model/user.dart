@@ -5,6 +5,9 @@ class User {
   int? client_id;
   int? id;
   String? client;
+  String? title;
+  String? description;
+  String? date;
   String? name;
   String? avatar;
   String? email;
@@ -35,6 +38,7 @@ class User {
   String? idItens;
   String? urlCliente;
   String? msg;
+  int? rows;
 
 
   User({
@@ -43,6 +47,9 @@ class User {
     this.client_id,
     this.id,
     this.client,
+    this.title,
+    this.description,
+    this.date,
     this.name,
     this.avatar,
     this.email,
@@ -72,6 +79,7 @@ class User {
     this.itens,
     this.idItens,
     this.msg,
+    this.rows,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {

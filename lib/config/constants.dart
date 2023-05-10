@@ -15,9 +15,12 @@ class WSConstantes {
   static const String LOGIN = "usuarios/login";
   static const String REGISTRER = "usuarios/cadastro";
   static const String PERFIL_USER = "usuarios/perfil/";
+  static const String UPDATE_USER = "usuarios/updateUser";
+  static const String UPDATE_PASSWORD = "usuarios/updatepassword";
   static const String RECOVERRY_PASSWORD = "usuarios/recuperarsenha";
   static const String SAVE_FCM = "usuarios/savefcm";
   static const String STATISTICS = "cruzadas/estatisticas";
+  static const String NOTIFICATION = "usuarios/Notificacoes";
   static const String LIST_CRUZADISTA = "cruzadas/listCruzadas";
 
   /**:::Body:::**/
@@ -25,6 +28,7 @@ class WSConstantes {
   static const String PASSWORD = "password";
   static const String PHONE = "celular";
   static const String NAME = "nome";
+  static const String BIRTH = "data_nascimento";
   static const String ID_USER = "id_user";
   static const String TYPE = "type";
   static const String REGIST_ID = "registration_id";
