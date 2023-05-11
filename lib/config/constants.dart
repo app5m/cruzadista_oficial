@@ -22,6 +22,8 @@ class WSConstantes {
   static const String STATISTICS = "cruzadas/estatisticas";
   static const String NOTIFICATION = "usuarios/Notificacoes";
   static const String LIST_CRUZADISTA = "cruzadas/listCruzadas";
+  static const String ZERA_CRUZADA = "cruzadas/zerar";
+  static const String DESATIVE_ACCOUNT = "usuarios/desativarconta";
 
   /**:::Body:::**/
   static const String EMAIL = "email";

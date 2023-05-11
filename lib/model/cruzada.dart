@@ -5,6 +5,9 @@ class Cruzada {
   int? rows;
   String? name;
   String? url;
+  int? id;
+  String? idNivel;
+  String? image;
 
   Cruzada({
     this.total,
@@ -12,7 +15,10 @@ class Cruzada {
     this.pendentes,
     this.rows,
     this.name,
-    this.url
+    this.url,
+    this.id,
+    this.idNivel,
+    this.image
 });
 
 

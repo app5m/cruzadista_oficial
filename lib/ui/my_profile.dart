@@ -222,6 +222,7 @@ class _MyProfileState extends State<MyProfile> {
                         padding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         child: TextField(
+                          enabled: false,
                           controller: _emailUpdateController,
                           decoration: InputDecoration(
                             border: InputBorder.none,
