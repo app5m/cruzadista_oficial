@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
     //nameUser = (await Preferences.getUserData()!.name)!;
     String? currentFcmToken = await _firebaseMessaging.getToken();
     if (savedFcmToken != null && savedFcmToken == currentFcmToken) {
-      print('FCM: não salvou porque ja foi salvo uma vez');
+      print('FCM: não salvou porque ja foi salvo uma vez!');
       return savedFcmToken;
     }
     var _userId = await Preferences.getUserData()!.id;
