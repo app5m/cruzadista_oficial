@@ -308,7 +308,7 @@ class _HomeState extends State<Home> {
                               totalValue!,
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 fontFamily: 'Poppins',
                               ),
@@ -355,7 +355,7 @@ class _HomeState extends State<Home> {
                               finalizadasValue!,
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 fontFamily: 'Poppins',
                               ),
@@ -403,7 +403,7 @@ class _HomeState extends State<Home> {
                               pendentesValue!,
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 fontFamily: 'Poppins',
                               ),
