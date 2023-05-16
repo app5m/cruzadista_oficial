@@ -33,8 +33,8 @@ class _HomeState extends State<Home> {
   bool _listTyper = false;
   bool _dificScreen = false;
 
-  final List<CrossWordL> crossWords = [];
-  final List<CrossWordL> crossWordsFinalizadas = [];
+  final List<Cruzada> crossWords = [];
+  final List<Cruzada> crossWordsFinalizadas = [];
 
   final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -151,11 +151,13 @@ class _HomeState extends State<Home> {
           setState(() {
             crossWords.clear();
             for (final item in decodedResponse) {
-              final crossWord = CrossWordL(
-                item['nome'], // nome do item da API
-                'images/logoadapter.png', // url do item da API
+              final crossWord = Cruzada(
+                name: item['nome'],
+                image: 'images/logoadapter.png',
+                id: item['id'],
               );
               crossWords.add(crossWord);
+              print(crossWords);
             }
           });
         } else {
@@ -172,19 +174,22 @@ class _HomeState extends State<Home> {
             .sendPostRequestList(WSConstantes.LIST_CRUZADISTA, body);
         if (decodedResponse.isNotEmpty) {
           setState(() {
-            crossWords.clear();
+            crossWordsFinalizadas.clear();
             for (final item in decodedResponse) {
-              final crossWord = CrossWordL(
-                item['nome'], // nome do item da API
-                'images/logoadapter.png', // url do item da API
+              final crossWord = Cruzada(
+                name: item['nome'],
+                image: 'images/logoadapter.png',
+                id: item['id'],
               );
-              crossWords.add(crossWord);
+              crossWordsFinalizadas.add(crossWord);
             }
           });
         } else {
+          crossWordsFinalizadas.clear();
           print('NULO');
         }
       }
+      getStatistics();
     } catch (e) {
       print(e);
     }
@@ -303,7 +308,7 @@ class _HomeState extends State<Home> {
                               totalValue!,
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 fontFamily: 'Poppins',
                               ),
@@ -350,7 +355,7 @@ class _HomeState extends State<Home> {
                               finalizadasValue!,
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 fontFamily: 'Poppins',
                               ),
@@ -398,7 +403,7 @@ class _HomeState extends State<Home> {
                               pendentesValue!,
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 fontFamily: 'Poppins',
                               ),
@@ -475,11 +480,11 @@ class _HomeState extends State<Home> {
                             getListCruazadist(type, level);
                             _dificScreen = true;
                             if(level == 1){
-                              dific = "Facil";
+                              dific = "Fácil";
                             }else if(level == 2){
-                              dific = "Medio";
-                            }else if(level == 2){
-                              dific = "Dificil";
+                              dific = "Médio";
+                            }else if(level == 3){
+                              dific = "Difícil";
                             }
                           },
                         ),
@@ -666,7 +671,7 @@ class CrossWordL {
 }
 
 class MyCard extends StatelessWidget {
-  final CrossWordL crossWordL;
+  final Cruzada crossWordL;
 
   MyCard({required this.crossWordL});
 
@@ -686,12 +691,12 @@ class MyCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                crossWordL.image,
+                crossWordL.image!,
                 width: 80,
                 height: 80,
               ),
               Text(
-                crossWordL.title,
+                crossWordL.name!,
                 style: TextStyle(
                     fontSize: FontSizes.subTitulo,
                     fontFamily: 'Poppins',

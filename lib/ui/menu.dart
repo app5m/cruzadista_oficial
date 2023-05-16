@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cruzadista/components/alert_dialog_generic.dart';
@@ -6,9 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../components/fonte_size.dart';
+import '../config/constants.dart';
 import '../config/preferences.dart';
+import '../config/requests.dart';
+import '../model/user.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
@@ -18,6 +23,95 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
+  final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
+
+  Future<String?> zeraProgress() async {
+    await Preferences.init();
+    var _userId = await Preferences.getUserData()!.id;
+    final user = User();
+
+      final body = {
+        WSConstantes.ID: _userId,
+        WSConstantes.TOKENID: WSConstantes.TOKEN
+      };
+
+      final response = await requestsWebServices.sendPostRequest(
+          WSConstantes.ZERA_CRUZADA, body);
+      final decodedResponse = jsonDecode(response);
+      if (decodedResponse.isNotEmpty) {
+        user.status = decodedResponse[0]['status'];
+        user.msg = decodedResponse[0]['msg'];
+
+        if (user.status == "01") {
+          setState(() async {
+            Fluttertoast.showToast(
+              msg: user.msg!,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+            );
+            // await Preferences.clearUserData();
+            // SystemNavigator.pop();
+            Navigator.popUntil(context, ModalRoute.withName('/ui/home'));
+            Navigator.pushReplacementNamed(context, '/ui/home');
+
+          });
+        } else {
+          setState(() {
+            Fluttertoast.showToast(
+              msg: user.msg!,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+            );
+          });
+        }
+        print('Status ${user.status}, Mensagem: ${user.msg}');
+      }
+
+
+  }
+
+  Future<String?> desativeAccount() async {
+    await Preferences.init();
+    var _userId = await Preferences.getUserData()!.id;
+    final user = User();
+
+    final body = {
+      WSConstantes.ID: _userId,
+      WSConstantes.TOKENID: WSConstantes.TOKEN
+    };
+
+    final response = await requestsWebServices.sendPostRequest(
+        WSConstantes.DESATIVE_ACCOUNT, body);
+    final decodedResponse = jsonDecode(response);
+    if (decodedResponse.isNotEmpty) {
+      user.status = decodedResponse[0]['status'];
+      user.msg = decodedResponse[0]['msg'];
+
+      if (user.status == "01") {
+        setState(() async {
+          Fluttertoast.showToast(
+            msg: user.msg!,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+          );
+          await Preferences.clearUserData();
+          SystemNavigator.pop();
+
+        });
+      } else {
+        setState(() {
+          Fluttertoast.showToast(
+            msg: user.msg!,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+          );
+        });
+      }
+      print('Status ${user.status}, Mensagem: ${user.msg}');
+    }
+
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +187,6 @@ class _MenuState extends State<Menu> {
                   ),
                   onTap: () {
                     Navigator.pushNamed(context, "/ui/myProfile");
-
                   },
                 ),
                 InkWell(
@@ -178,35 +271,36 @@ class _MenuState extends State<Menu> {
                       builder: (BuildContext context) {
                         return DialogGeneric(
                           title: 'Atenção!',
-                          content: 'Você tem certeza que deseja zera seu progesso?',
+                          content:
+                              'Você tem certeza que deseja zera seu progesso?',
                           btnBack: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: Text('Não', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Não',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                           btnConfirm: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                zeraProgress();
                               },
-                              child: Text('Sim', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Sim',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                         );
                       },
                     );
@@ -255,35 +349,36 @@ class _MenuState extends State<Menu> {
                       builder: (BuildContext context) {
                         return DialogGeneric(
                           title: 'Atenção!',
-                          content: 'Você tem certeza que deseja deativar sua conta?',
+                          content:
+                              'Você tem certeza que deseja deativar sua conta?',
                           btnBack: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: Text('Não', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Não',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                           btnConfirm: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                desativeAccount();
                               },
-                              child: Text('Sim', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Sim',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                         );
                       },
                     );
@@ -332,43 +427,43 @@ class _MenuState extends State<Menu> {
                       builder: (BuildContext context) {
                         return DialogGeneric(
                           title: 'Atenção!',
-                          content: 'Você tem certeza que deseja realizar seu logout?',
+                          content:
+                              'Você tem certeza que deseja realizar seu logout?',
                           btnBack: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: Text('Não', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Não',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                           btnConfirm: TextButton(
                               style: TextButton.styleFrom(
                                   foregroundColor: MyColors.colorPrimary),
-                              onPressed: ()async {
-                               await Preferences.init();
-                               await Preferences.clearUserData();
-                               exit(0);
-                               // if(Platform.isAndroid){
-                               //   FlutterExitApp.exitApp();
-                               // }else{
-                               //   FlutterExitApp.exitApp(iosForceExit: true);
-                               // }
-
+                              onPressed: () async {
+                                await Preferences.init();
+                                await Preferences.clearUserData();
+                                SystemNavigator.pop();
+                                // if(Platform.isAndroid){
+                                //   FlutterExitApp.exitApp();
+                                // }else{
+                                //   FlutterExitApp.exitApp(iosForceExit: true);
+                                // }
                               },
-                              child: Text('Sim', style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                              )
-                          ),
-
+                              child: Text(
+                                'Sim',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
                         );
                       },
                     );
