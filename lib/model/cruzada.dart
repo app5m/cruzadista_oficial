@@ -8,6 +8,8 @@ class Cruzada {
   int? id;
   String? idNivel;
   String? image;
+  String? status;
+  String? msg;
 
   Cruzada({
     this.total,
@@ -18,7 +20,9 @@ class Cruzada {
     this.url,
     this.id,
     this.idNivel,
-    this.image
+    this.image,
+    this.status,
+    this.msg
 });
 
 

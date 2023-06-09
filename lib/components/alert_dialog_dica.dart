@@ -6,13 +6,24 @@ import 'colors.dart';
 class DialogDic extends StatefulWidget {
   Color? colorCell;
   Color? colorText;
-  DialogDic({Key? key, this.colorCell, this.colorText,}) : super(key: key);
+
+  final Function(bool, bool) onContainerFilter;
+
+  DialogDic(
+      {Key? key,
+        this.colorCell,
+        this.colorText,
+        required this.onContainerFilter})
+      : super(key: key);
 
   @override
   State<DialogDic> createState() => _DialogDicState();
 }
 
 class _DialogDicState extends State<DialogDic> {
+  bool reveltionWord = false;
+  bool reveltionLetre = false;
+
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
@@ -33,26 +44,43 @@ class _DialogDicState extends State<DialogDic> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.close, color: widget.colorText == Colors.white ? Colors.black : widget.colorText,),
+                    icon: Icon(
+                      Icons.close,
+                      color: widget.colorText == Colors.white
+                          ? Colors.black
+                          : widget.colorText,
+                    ),
                     onPressed: () {
+
                       Navigator.of(context).pop();
                     },
                   ),
                 ],
               ),
               SizedBox(height: 4),
-              Center(child: Text('Selecione a dica', style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: widget.colorText == Colors.white ? Colors.black : widget.colorText,
-                fontFamily: 'Poppins',
-                fontSize: FontSizes.titulo
-              ),)),
+              Center(
+                  child: Text(
+                    'Selecione a dica',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: widget.colorText == Colors.white
+                            ? Colors.black
+                            : widget.colorText,
+                        fontFamily: 'Poppins',
+                        fontSize: FontSizes.titulo),
+                  )),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
+                  setState(() {
+                    reveltionWord = true;
+                    reveltionLetre = false;
+                  });
+                  widget.onContainerFilter(reveltionWord, reveltionLetre);
                   Navigator.of(context).pop();
                 },
-                child: Text('Revelar Palavra',
+                child: Text(
+                  'Revelar Palavra',
                   style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Poppins',
@@ -60,14 +88,13 @@ class _DialogDicState extends State<DialogDic> {
                       fontSize: FontSizes.subTitulo),
                 ),
                 style: ButtonStyle(
-                  shape: MaterialStateProperty.all<
-                      RoundedRectangleBorder>(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
-                  backgroundColor: MaterialStateProperty.all(
-                      MyColors.colorPrimary),
+                  backgroundColor:
+                  MaterialStateProperty.all(MyColors.colorPrimary),
                   padding: MaterialStateProperty.all(
                       const EdgeInsets.symmetric(vertical: 10)),
                 ),
@@ -75,9 +102,15 @@ class _DialogDicState extends State<DialogDic> {
               SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () {
+                  setState(() {
+                    reveltionWord = false;
+                    reveltionLetre = true;
+                  });
+                  widget.onContainerFilter(reveltionWord, reveltionLetre);
                   Navigator.of(context).pop();
                 },
-                child: Text('Relevar Letra' ,
+                child: Text(
+                  'Relevar Letra',
                   style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Poppins',
@@ -85,25 +118,21 @@ class _DialogDicState extends State<DialogDic> {
                       fontSize: FontSizes.subTitulo),
                 ),
                 style: ButtonStyle(
-                  shape: MaterialStateProperty.all<
-                      RoundedRectangleBorder>(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
-                  backgroundColor: MaterialStateProperty.all(
-                      MyColors.colorPrimary),
+                  backgroundColor:
+                  MaterialStateProperty.all(MyColors.colorPrimary),
                   padding: MaterialStateProperty.all(
                       const EdgeInsets.symmetric(vertical: 10)),
                 ),
               ),
-
             ],
           ),
         ),
-
       ),
     );
   }
 }
-

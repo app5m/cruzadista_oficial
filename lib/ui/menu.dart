@@ -30,44 +30,41 @@ class _MenuState extends State<Menu> {
     var _userId = await Preferences.getUserData()!.id;
     final user = User();
 
-      final body = {
-        WSConstantes.ID: _userId,
-        WSConstantes.TOKENID: WSConstantes.TOKEN
-      };
+    final body = {
+      WSConstantes.ID: _userId,
+      WSConstantes.TOKENID: WSConstantes.TOKEN
+    };
 
-      final response = await requestsWebServices.sendPostRequest(
-          WSConstantes.ZERA_CRUZADA, body);
-      final decodedResponse = jsonDecode(response);
-      if (decodedResponse.isNotEmpty) {
-        user.status = decodedResponse[0]['status'];
-        user.msg = decodedResponse[0]['msg'];
+    final response = await requestsWebServices.sendPostRequest(
+        WSConstantes.ZERA_CRUZADA, body);
+    final decodedResponse = jsonDecode(response);
+    if (decodedResponse.isNotEmpty) {
+      user.status = decodedResponse[0]['status'];
+      user.msg = decodedResponse[0]['msg'];
 
-        if (user.status == "01") {
-          setState(() async {
-            Fluttertoast.showToast(
-              msg: user.msg!,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-            );
-            // await Preferences.clearUserData();
-            // SystemNavigator.pop();
-            Navigator.popUntil(context, ModalRoute.withName('/ui/home'));
-            Navigator.pushReplacementNamed(context, '/ui/home');
-
-          });
-        } else {
-          setState(() {
-            Fluttertoast.showToast(
-              msg: user.msg!,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-            );
-          });
-        }
-        print('Status ${user.status}, Mensagem: ${user.msg}');
+      if (user.status == "01") {
+        setState(() async {
+          Fluttertoast.showToast(
+            msg: user.msg!,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+          );
+          // await Preferences.clearUserData();
+          // SystemNavigator.pop();
+          Navigator.popUntil(context, ModalRoute.withName('/ui/home'));
+          Navigator.pushReplacementNamed(context, '/ui/home');
+        });
+      } else {
+        setState(() {
+          Fluttertoast.showToast(
+            msg: user.msg!,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+          );
+        });
       }
-
-
+      print('Status ${user.status}, Mensagem: ${user.msg}');
+    }
   }
 
   Future<String?> desativeAccount() async {
@@ -96,7 +93,6 @@ class _MenuState extends State<Menu> {
           );
           await Preferences.clearUserData();
           SystemNavigator.pop();
-
         });
       } else {
         setState(() {
@@ -109,9 +105,8 @@ class _MenuState extends State<Menu> {
       }
       print('Status ${user.status}, Mensagem: ${user.msg}');
     }
-
-
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -266,44 +261,7 @@ class _MenuState extends State<Menu> {
                     ],
                   ),
                   onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return DialogGeneric(
-                          title: 'Atenção!',
-                          content:
-                              'Você tem certeza que deseja zera seu progesso?',
-                          btnBack: TextButton(
-                              style: TextButton.styleFrom(
-                                  foregroundColor: MyColors.colorPrimary),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                'Não',
-                                style: TextStyle(
-                                  fontSize: FontSizes.subTitulo,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Poppins',
-                                ),
-                              )),
-                          btnConfirm: TextButton(
-                              style: TextButton.styleFrom(
-                                  foregroundColor: MyColors.colorPrimary),
-                              onPressed: () {
-                                zeraProgress();
-                              },
-                              child: Text(
-                                'Sim',
-                                style: TextStyle(
-                                  fontSize: FontSizes.subTitulo,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Poppins',
-                                ),
-                              )),
-                        );
-                      },
-                    );
+                    _showModalBottomSheetZero(context);
                   },
                 ),
                 InkWell(
@@ -344,44 +302,7 @@ class _MenuState extends State<Menu> {
                     ],
                   ),
                   onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return DialogGeneric(
-                          title: 'Atenção!',
-                          content:
-                              'Você tem certeza que deseja deativar sua conta?',
-                          btnBack: TextButton(
-                              style: TextButton.styleFrom(
-                                  foregroundColor: MyColors.colorPrimary),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                'Não',
-                                style: TextStyle(
-                                  fontSize: FontSizes.subTitulo,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Poppins',
-                                ),
-                              )),
-                          btnConfirm: TextButton(
-                              style: TextButton.styleFrom(
-                                  foregroundColor: MyColors.colorPrimary),
-                              onPressed: () {
-                                desativeAccount();
-                              },
-                              child: Text(
-                                'Sim',
-                                style: TextStyle(
-                                  fontSize: FontSizes.subTitulo,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Poppins',
-                                ),
-                              )),
-                        );
-                      },
-                    );
+                    _showModalBottomSheetDesative(context);
                   },
                 ),
                 InkWell(
@@ -422,51 +343,7 @@ class _MenuState extends State<Menu> {
                     ],
                   ),
                   onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return DialogGeneric(
-                          title: 'Atenção!',
-                          content:
-                              'Você tem certeza que deseja realizar seu logout?',
-                          btnBack: TextButton(
-                              style: TextButton.styleFrom(
-                                  foregroundColor: MyColors.colorPrimary),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                'Não',
-                                style: TextStyle(
-                                  fontSize: FontSizes.subTitulo,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Poppins',
-                                ),
-                              )),
-                          btnConfirm: TextButton(
-                              style: TextButton.styleFrom(
-                                  foregroundColor: MyColors.colorPrimary),
-                              onPressed: () async {
-                                await Preferences.init();
-                                await Preferences.clearUserData();
-                                SystemNavigator.pop();
-                                // if(Platform.isAndroid){
-                                //   FlutterExitApp.exitApp();
-                                // }else{
-                                //   FlutterExitApp.exitApp(iosForceExit: true);
-                                // }
-                              },
-                              child: Text(
-                                'Sim',
-                                style: TextStyle(
-                                  fontSize: FontSizes.subTitulo,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Poppins',
-                                ),
-                              )),
-                        );
-                      },
-                    );
+                    _showModalBottomSheetExit(context);
                   },
                 ),
               ],
@@ -474,6 +351,270 @@ class _MenuState extends State<Menu> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showModalBottomSheetExit(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
+      )),
+      builder: (BuildContext bc) {
+        return Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Atenção",
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Color(0xff000000)),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Você tem certeza que deseja sair?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Color(0xff000000)),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Spacer(),
+                        ElevatedButton(
+                          onPressed: () async {
+                            await Preferences.init();
+                            await Preferences.clearUserData();
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/ui/login',
+                              (Route<dynamic> route) => false,
+                            );
+                          },
+                          child: Text("Sim"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff000000),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(
+                            "Não",
+                            style: TextStyle(color: Color(0xff000000)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16)
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showModalBottomSheetZero(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
+      )),
+      builder: (BuildContext bc) {
+        return Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Atenção",
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Color(0xff000000)),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Você tem certeza que deseja zera seu progesso?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Color(0xff000000)),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Spacer(),
+                        ElevatedButton(
+                          onPressed: () async {
+                            zeraProgress();
+                          },
+                          child: Text("Sim"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff000000),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(
+                            "Não",
+                            style: TextStyle(color: Color(0xff000000)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16)
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showModalBottomSheetDesative(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
+      )),
+      builder: (BuildContext bc) {
+        return Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Atenção",
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Color(0xff000000)),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Você tem certeza que deseja deativar sua conta?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Color(0xff000000)),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Spacer(),
+                        ElevatedButton(
+                          onPressed: () async {
+                            desativeAccount();
+                          },
+                          child: Text("Sim"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff000000),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(
+                            "Não",
+                            style: TextStyle(color: Color(0xff000000)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16)
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -23,6 +23,7 @@ class WSConstantes {
   static const String NOTIFICATION = "usuarios/Notificacoes";
   static const String LIST_CRUZADISTA = "cruzadas/listCruzadas";
   static const String ZERA_CRUZADA = "cruzadas/zerar";
+  static const String CONCLUDE_CRUZADA = "cruzadas/concluir";
   static const String DESATIVE_ACCOUNT = "usuarios/desativarconta";
 
   /**:::Body:::**/
@@ -36,6 +37,7 @@ class WSConstantes {
   static const String REGIST_ID = "registration_id";
   static const String ID = "id";
   static const String ID_NIVEL = "id_nivel";
+  static const String ID_CRUZADA = "id_cruzada";
   static const String TOKENID = "token";
 
   /**:::Validações:::**/

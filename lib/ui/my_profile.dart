@@ -158,7 +158,7 @@ class _MyProfileState extends State<MyProfile> {
               Column(
                 children: [
                   CircleAvatar(
-                    backgroundImage: ExactAssetImage('images/avatar.png'),
+                    backgroundImage: ExactAssetImage('images/usercruzadista.png'),
                     radius: 60,
                     backgroundColor: MyColors.grayLite,
                   ),
@@ -180,7 +180,7 @@ class _MyProfileState extends State<MyProfile> {
                         ),
                       ),
                       backgroundColor:
-                          MaterialStateProperty.all(MyColors.colorPrimary),
+                      MaterialStateProperty.all(MyColors.colorPrimary),
                       padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(
                               vertical: 8, horizontal: 16)),
@@ -196,7 +196,7 @@ class _MyProfileState extends State<MyProfile> {
                       ),
                       child: Padding(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         child: TextField(
                           controller: _nameUpdateController,
                           decoration: InputDecoration(
@@ -220,7 +220,7 @@ class _MyProfileState extends State<MyProfile> {
                       ),
                       child: Padding(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         child: TextField(
                           enabled: false,
                           controller: _emailUpdateController,
@@ -245,7 +245,7 @@ class _MyProfileState extends State<MyProfile> {
                       ),
                       child: Padding(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         child: TextField(
                           controller: _cellphoneUpdateController,
                           inputFormatters: [maskFormatter],
@@ -270,7 +270,7 @@ class _MyProfileState extends State<MyProfile> {
                       ),
                       child: Padding(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         child: TextField(
                           controller: _birthUpdateController,
                           decoration: InputDecoration(
@@ -286,7 +286,7 @@ class _MyProfileState extends State<MyProfile> {
                   ),
                   Padding(
                     padding:
-                        const EdgeInsets.only(top: 16, left: 16, right: 16),
+                    const EdgeInsets.only(top: 16, left: 16, right: 16),
                     child: Container(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -303,13 +303,13 @@ class _MyProfileState extends State<MyProfile> {
                         ),
                         style: ButtonStyle(
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                          MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
                           backgroundColor:
-                              MaterialStateProperty.all(MyColors.colorPrimary),
+                          MaterialStateProperty.all(MyColors.colorPrimary),
                           padding: MaterialStateProperty.all(
                               const EdgeInsets.symmetric(vertical: 16)),
                         ),
@@ -332,7 +332,7 @@ class _MyProfileState extends State<MyProfile> {
                               ),
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.only(left: 2, right: 2),
+                                const EdgeInsets.only(left: 2, right: 2),
                                 child: SizedBox(
                                   width: 1,
                                   height: 50,

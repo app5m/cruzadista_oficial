@@ -26,8 +26,6 @@ class RequestsWebServices {
     }
   }
 
-
-
   Future<List<dynamic>> sendPostRequestList(String urlResquet, dynamic body) async {
     try {
       final response = await http.post(

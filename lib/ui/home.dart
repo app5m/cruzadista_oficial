@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cruzadista/components/fonte_size.dart';
 import 'package:cruzadista/model/cruzada.dart';
+import 'package:cruzadista/ui/game/game.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -45,7 +46,7 @@ class _HomeState extends State<Home> {
     //nameUser = (await Preferences.getUserData()!.name)!;
     String? currentFcmToken = await _firebaseMessaging.getToken();
     if (savedFcmToken != null && savedFcmToken == currentFcmToken) {
-      print('FCM: não salvou porque ja foi salvo uma vez!');
+      print('FCM: não salvou');
       return savedFcmToken;
     }
     var _userId = await Preferences.getUserData()!.id;
@@ -62,7 +63,7 @@ class _HomeState extends State<Home> {
       WSConstantes.TOKENID: WSConstantes.TOKEN
     };
     final response =
-        await requestsWebServices.sendPostRequest(WSConstantes.SAVE_FCM, body);
+    await requestsWebServices.sendPostRequest(WSConstantes.SAVE_FCM, body);
 
     print('FCM: $currentFcmToken');
     print('RESPOSTA: $response');
@@ -92,7 +93,7 @@ class _HomeState extends State<Home> {
 
       setState(() {
         nameUser = user.name!;
-        avatarUser = WSConstantes.URL_AVATAR + user.avatar!;
+       // avatarUser = WSConstantes.URL_AVATAR + user.avatar!;
       });
 
       print(
@@ -239,7 +240,7 @@ class _HomeState extends State<Home> {
                       elevation: 8,
                       shape: CircleBorder(),
                       child: CircleAvatar(
-                        backgroundImage: NetworkImage(avatarUser),
+                        backgroundImage: ExactAssetImage('images/usercruzadista.png'),
 
                         // ExactAssetImage('images/avatar.png'),
                         radius: 30,
@@ -431,44 +432,44 @@ class _HomeState extends State<Home> {
                 children: [
                   Visibility(visible: _dificScreen,
                       child: InkWell(
-                    onTap: () {
-                      _dificScreen = false;
-                      if(_selectedIndex == 0){
-                        getListCruazadist(1, 0);
-                      }else{
-                        getListCruazadist(2, 0);
-                      }
+                        onTap: () {
+                          _dificScreen = false;
+                          if(_selectedIndex == 0){
+                            getListCruazadist(1, 0);
+                          }else{
+                            getListCruazadist(2, 0);
+                          }
 
-                    },
-                    child: Card(
-                      margin: EdgeInsets.all(0),
-                      // Define a margem do card como zero
-                      color: MyColors.colorOnPrimary,
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(16),
-                            bottomRight: Radius.circular(16)),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              dific,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
+                        },
+                        child: Card(
+                          margin: EdgeInsets.all(0),
+                          // Define a margem do card como zero
+                          color: MyColors.colorOnPrimary,
+                          elevation: 8,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(16),
+                                bottomRight: Radius.circular(16)),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  dific,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                                Icon(Icons.close, color: Colors.black,),
+                              ],
                             ),
-                            Icon(Icons.close, color: Colors.black,),
-                          ],
+                          ),
+                          borderOnForeground: false,
+                          clipBehavior: Clip.antiAlias,
                         ),
-                      ),
-                      borderOnForeground: false,
-                      clipBehavior: Clip.antiAlias,
-                    ),
-                  )),
+                      )),
                   Spacer(),
                   InkWell(
                     onTap: () {
@@ -561,7 +562,7 @@ class _HomeState extends State<Home> {
                     ),
                     splashColor: Colors.transparent,
                     highlightColor:
-                        _selectedIndex == 0 ? Colors.black : Colors.transparent,
+                    _selectedIndex == 0 ? Colors.black : Colors.transparent,
                   ),
                   InkWell(
                     onTap: () {
@@ -597,7 +598,7 @@ class _HomeState extends State<Home> {
                     ),
                     splashColor: Colors.transparent,
                     highlightColor:
-                        _selectedIndex == 1 ? Colors.black : Colors.transparent,
+                    _selectedIndex == 1 ? Colors.black : Colors.transparent,
                   ),
                 ],
               ),
@@ -679,7 +680,9 @@ class MyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, "/ui/game");
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => Game(cruzada: crossWordL,)));
+       // Navigator.pushNamed(context, "/ui/game");
       },
       child: Card(
         margin: EdgeInsets.only(left: 8, right: 8, bottom: 8),

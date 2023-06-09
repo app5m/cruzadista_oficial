@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cruzadista/config/constants.dart';
-import 'package:cruzadista/ui/game.dart';
+import 'package:cruzadista/ui/game/game.dart';
 import 'package:cruzadista/ui/home.dart';
 import 'package:cruzadista/ui/login.dart';
 import 'package:cruzadista/ui/menu.dart';
@@ -66,7 +66,7 @@ main() async {
       '/ui/menu': (context) => Menu(),
       '/ui/myProfile': (context) => MyProfile(),
       '/ui/updatePassword': (context) => UpdatePassword(),
-      '/ui/game': (context) => Game(),
+      // '/ui/game': (context) => Game(),
       // //EU SO ESTOU USANDO AS ROTAS ate a HOME
       // '/ui/view_pdf': (context) => ViewPdf(),
       // '/ui/menu': (context) => Menu(),

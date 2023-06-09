@@ -46,6 +46,7 @@ dependencies:
   firebase_messaging: ^14.5.0
   lottie: ^1.1.0
   permission_handler: ^10.2.0
+  flutter_local_notifications: ^14.1.1
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +82,7 @@ flutter:
     - images/nightmode.png
     - images/playbutton.png
     - images/avatar.png
+    - images/usercruzadista.png
 
     - icons/filtro.svg
     - icons/notification.svg
@@ -93,6 +95,8 @@ flutter:
     - icons/user.svg
 
     - animation/empty.json
+    - animation/confetti.json
+    - animation/a_confetti.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
