@@ -45,6 +45,14 @@ class _LoginState extends State<Login> {
   bool isLoadingRegistre = false;
   bool validationTextField = false;
 
+  String password = '';
+  String passwordConfig = '';
+  bool hasPasswordCoPassword = false;
+  bool hasUppercase = false;
+  bool hasMinLength = false;
+  bool visibileOne = false;
+  bool visibileTwo = false;
+
   final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
 
   @override
@@ -490,7 +498,18 @@ class _LoginState extends State<Login> {
                         child: Padding(
                           padding:
                               EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                          child: TextField(
+                          child: TextFormField(
+                            onChanged: (value) {
+                              setState(() {
+                                password = value;
+                                visibileOne = true;
+                                hasMinLength = password.length >= 8;
+                                hasUppercase = password.contains(RegExp(r'[A-Z]'));
+                                if (hasMinLength && hasUppercase) {
+                                  visibileOne = false;
+                                }
+                              });
+                            },
                             obscureText: true,
                             controller: _passwordRegistreController,
                             decoration: InputDecoration(
@@ -498,6 +517,41 @@ class _LoginState extends State<Login> {
                               hintText: 'Senha',
                             ),
                           ),
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Visibility(
+                        visible: password.isNotEmpty,
+                        child: Row(
+                          children: [
+                            Icon(
+                              hasMinLength
+                                  ? Icons.check_circle
+                                  : Icons.check_circle,
+                              color: hasMinLength ? Colors.green : Colors.grey,
+                            ),
+                            Text(
+                              'Deve ter no mínimo 8 carácteres',
+                              style: TextStyle(color: Color(0xFF000000)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: password.isNotEmpty,
+                        child: Row(
+                          children: [
+                            Icon(
+                              hasUppercase
+                                  ? Icons.check_circle
+                                  : Icons.check_circle,
+                              color: hasUppercase ? Colors.green : Colors.grey,
+                            ),
+                            Text(
+                              'Deve ter uma letra maiúscula',
+                              style: TextStyle(color: Color(0xFF000000)),
+                            ),
+                          ],
                         ),
                       ),
                       SizedBox(
@@ -512,7 +566,18 @@ class _LoginState extends State<Login> {
                         child: Padding(
                           padding:
                               EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                          child: TextField(
+                          child: TextFormField(
+                            onChanged: (value) {
+                              setState(() {
+                                visibileTwo = true;
+                                passwordConfig = value;
+                                hasPasswordCoPassword = passwordConfig == password;
+
+                                if (hasPasswordCoPassword) {
+                                  visibileTwo = false;
+                                }
+                              });
+                            },
                             obscureText: true,
                             controller: _coPasswordRegistreController,
                             decoration: InputDecoration(
@@ -520,6 +585,26 @@ class _LoginState extends State<Login> {
                               hintText: 'Confirmar Senha',
                             ),
                           ),
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Visibility(
+                        visible: passwordConfig.isNotEmpty,
+                        child: Row(
+                          children: [
+                            Icon(
+                              hasPasswordCoPassword
+                                  ? Icons.check_circle
+                                  : Icons.check_circle,
+                              color: hasPasswordCoPassword
+                                  ? Colors.green
+                                  : Colors.grey,
+                            ),
+                            Text(
+                              'As senhas fornecidas são idênticas',
+                              style: TextStyle(color: Color(0xFF000000)),
+                            ),
+                          ],
                         ),
                       ),
                       SizedBox(

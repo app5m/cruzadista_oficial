@@ -18,7 +18,7 @@ class MyNotifications extends StatefulWidget {
 
 class _MyNotificationsState extends State<MyNotifications> {
   List<User> notifications = [];
-
+  int unreadNotificationsCount = 0;
   final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
 
   Future<void> getNotificaiton() async {
@@ -33,7 +33,6 @@ class _MyNotificationsState extends State<MyNotifications> {
       final List<dynamic> decodedResponse = await requestsWebServices
           .sendPostRequestList(WSConstantes.NOTIFICATION, body);
       if (decodedResponse.isNotEmpty) {
-
         setState(() {
           notifications.clear();
           for (final item in decodedResponse) {
@@ -45,13 +44,18 @@ class _MyNotificationsState extends State<MyNotifications> {
               rows: item['rows'],
             );
             print('rows: ${notification.rows}');
-            if(notification.rows == 0){
+            if (notification.rows == 0) {
               notifications.clear();
-            }else{
-            notifications.add(notification);
+              unreadNotificationsCount = 0;
+            } else {
+              notifications.add(notification);
+              notification.isViewed = true;
+              if (notification.isViewed) {
+                unreadNotificationsCount++; // Increment the count
+              }
             }
-
           }
+          Preferences.setUnreadNotificationsCount(unreadNotificationsCount);
         });
       } else {
         print('NULO');
@@ -83,7 +87,8 @@ class _MyNotificationsState extends State<MyNotifications> {
                   IconButton(
                     icon: Icon(Icons.close),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pushNamedAndRemoveUntil(context, '/ui/home', (Route<dynamic> route) => false,);
+
                     },
                   ),
                 ],
@@ -124,24 +129,25 @@ class _MyNotificationsState extends State<MyNotifications> {
                         ),
                       )
                     : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Lottie.asset('animation/empty.json',
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Lottie.asset('animation/empty.json',
                               repeat: true,
                               reverse: true,
                               animate: true,
-                            width: 250,
-                            height: 250),
-                            Text('Nenhuma notificação',
-                              style: TextStyle(
-                                fontSize: FontSizes.subTitulo,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),),
-                          ],
-                        ),
-
+                              width: 250,
+                              height: 250),
+                          Text(
+                            'Nenhuma notificação',
+                            style: TextStyle(
+                              fontSize: FontSizes.subTitulo,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ],
+                      ),
               ),
             ],
           ),

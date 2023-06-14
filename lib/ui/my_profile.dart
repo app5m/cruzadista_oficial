@@ -162,30 +162,6 @@ class _MyProfileState extends State<MyProfile> {
                     radius: 60,
                     backgroundColor: MyColors.grayLite,
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/ui/login");
-                    },
-                    child: Text(
-                      "EDITAR AVATAR",
-                      style: TextStyle(
-                          color: MyColors.colorOnPrimary,
-                          fontFamily: 'Poppins',
-                          fontSize: 16),
-                    ),
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      backgroundColor:
-                      MaterialStateProperty.all(MyColors.colorPrimary),
-                      padding: MaterialStateProperty.all(
-                          const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 16)),
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Card(

@@ -27,7 +27,8 @@ class _HomeState extends State<Home> {
   var nameUser = 'Joao Victor';
   var avatarUser = '';
   var dific = '';
-
+  int unreadNotificationsCount = 0;
+  String notificationsCount = "0";
   String? totalValue = '';
   String? finalizadasValue = '';
   String? pendentesValue = '';
@@ -36,7 +37,7 @@ class _HomeState extends State<Home> {
 
   final List<Cruzada> crossWords = [];
   final List<Cruzada> crossWordsFinalizadas = [];
-
+  final List<User> notifications = [];
   final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
@@ -129,6 +130,7 @@ class _HomeState extends State<Home> {
       } else {
         print('NULO');
       }
+      getNotificaiton();
     } catch (e) {
       print(e);
     }
@@ -156,7 +158,9 @@ class _HomeState extends State<Home> {
                 name: item['nome'],
                 image: 'images/logoadapter.png',
                 id: item['id'],
+                url: item['url'],
               );
+
               crossWords.add(crossWord);
               print(crossWords);
             }
@@ -181,6 +185,8 @@ class _HomeState extends State<Home> {
                 name: item['nome'],
                 image: 'images/logoadapter.png',
                 id: item['id'],
+                url: item['url'],
+                status: item['status'].toString(),
               );
               crossWordsFinalizadas.add(crossWord);
             }
@@ -191,6 +197,59 @@ class _HomeState extends State<Home> {
         }
       }
       getStatistics();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> getNotificaiton() async {
+    try {
+      await Preferences.init();
+      final userId = Preferences.getUserData()?.id;
+      final body = {
+        WSConstantes.ID: userId,
+        WSConstantes.TOKENID: WSConstantes.TOKEN
+      };
+
+      final List<dynamic> decodedResponse = await requestsWebServices
+          .sendPostRequestList(WSConstantes.NOTIFICATION, body);
+      if (decodedResponse.isNotEmpty) {
+
+        setState(() {
+          notifications.clear();
+          for (final item in decodedResponse) {
+            final notification = User(
+              id: item['id'],
+              title: item['titulo'],
+              description: item['descricao'],
+              date: item['data'],
+              rows: item['rows'],
+            );
+            print('rows: ${notification.rows}');
+            if(notification.rows == 0){
+              notifications.clear();
+            }else{
+              notifications.add(notification);
+            }
+
+          }
+
+          int getListNotifyDataCompare = Preferences.getUnreadNotificationsCount();
+          print("$getListNotifyDataCompare aqui e o que ta salvo no preference");
+          if(getListNotifyDataCompare != 0){
+            unreadNotificationsCount = (notifications.length - getListNotifyDataCompare);
+            print("cai aqui (_notifications.length - getListNotifyDataCompare) =  $unreadNotificationsCount");
+          }else{
+            unreadNotificationsCount = notifications.length;
+          }
+          print("$unreadNotificationsCount aqui e total antes de chega no badge");
+
+        });
+
+
+      } else {
+        print('NULO');
+      }
     } catch (e) {
       print(e);
     }
@@ -209,6 +268,17 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if (unreadNotificationsCount == null){
+      notificationsCount = "0";
+
+    }else{
+      if (unreadNotificationsCount! > 9){
+        notificationsCount = "9+";
+
+      }else{
+        notificationsCount = unreadNotificationsCount.toString();
+      }
+    }
     print(avatarUser);
     return Scaffold(
       backgroundColor: MyColors.colorOnPrimary,
@@ -251,6 +321,7 @@ class _HomeState extends State<Home> {
                   SizedBox(
                     width: 8,
                   ),
+
                   InkWell(
                     onTap: () {
                       Navigator.pushNamed(context, "/ui/notification");
@@ -266,8 +337,43 @@ class _HomeState extends State<Home> {
                             bottomLeft: Radius.circular(16)),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SvgPicture.asset('icons/notification.svg'),
+                        padding: const EdgeInsets.all(3.0),
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: SvgPicture.asset(
+                                'icons/notification.svg',
+                                color: Color(0xff000000),
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
+                            if (unreadNotificationsCount! > 0)
+                              Positioned(
+                                right: 0,
+                                child: Container(
+                                  padding: EdgeInsets.all(1),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  constraints: BoxConstraints(
+                                    minWidth: 12,
+                                    minHeight: 12,
+                                  ),
+                                  child: Text(
+                                    notificationsCount,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.white,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                       borderOnForeground: false,
                       clipBehavior: Clip.antiAlias,
@@ -680,6 +786,8 @@ class MyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+
+        print(crossWordL.url);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => Game(cruzada: crossWordL,)));
        // Navigator.pushNamed(context, "/ui/game");

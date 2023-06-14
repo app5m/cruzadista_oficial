@@ -82,7 +82,15 @@ class Preferences {
     await preferences.remove('getData');
     await preferences.remove('login');
     await preferences.remove('token');
-    await preferences.remove('arrayNotifyCompare');
+    await preferences.remove('unreadNotificationsCount');
+  }
+
+  static Future<void> setUnreadNotificationsCount(int count) async {
+    await _preferences!.setInt('unreadNotificationsCount', count);
+  }
+
+  static int getUnreadNotificationsCount() {
+    return _preferences!.getInt('unreadNotificationsCount') ?? 0;
   }
 
   static const ENTERING_FIRST_TIME = 'EnteringFirstTime';

@@ -39,6 +39,7 @@ class User {
   String? urlCliente;
   String? msg;
   int? rows;
+  bool isViewed;
 
 
   User({
@@ -80,6 +81,7 @@ class User {
     this.idItens,
     this.msg,
     this.rows,
+    this.isViewed = false,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {

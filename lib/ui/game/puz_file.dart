@@ -19,9 +19,10 @@ class PuzFile {
   List<List<int>> wordStartPositions;
   List<Word>? wordsAcross;
   List<Word>? wordsDown;
+  List<String> clues;
 
   PuzFile(this.width, this.height, this.solution, this.playerSolution,
-      this.playerState, this.strings, this.wordStartPositions);
+      this.playerState, this.strings, this.wordStartPositions, this.clues);
 
   PuzFile.empty()
       : width = 0,
@@ -30,7 +31,10 @@ class PuzFile {
         playerSolution = [],
         playerState = '',
         strings = [],
+        clues = [],
         wordStartPositions = [];
+  
+
 
   void autoFillSolution() {
     for (int row = 0; row < height; row++) {
@@ -42,6 +46,8 @@ class PuzFile {
     }
     //setState(() {});
   }
+  
+  
 
   Map<String, String> getWordHintsMap() {
     List<String> wordHints = strings.sublist(3);
@@ -114,6 +120,36 @@ class PuzFile {
     return wordPositions;
   }
 
+  String extractHint(String palavraselecionada) {
+
+    List<String> wordHints = strings.sublist(3);
+    List<String> clues = [
+      "Propagado pela boca:ORAL",
+      "Antigo carro da GM, foi produzido de 1968 até 1992:OPALA",
+      "Boato:RUMOR",
+      "A prova de que o réu não estava no local do crime:ALIBI",
+      "A segunda parte de um disco de vinil:LADOB",
+      "Omitir algo de propósito:PULAR",
+      "Flor dada de presente em ocasiões especiais:ROSA",
+      "Pó obtido dos grãos de cereais:AMIDO",
+      "Animais sobreviventes da Era do Gelo:LOBOS",
+      "Árvore cuja madeira é usada em móveis de luxo e tacos para assoalhos:ARIBA",
+    ];
+
+    for (String clue in wordHints) {
+      List<String> parts = clue.split(":");
+      String hint = parts[0];
+      String word = parts[1];
+
+      if (word == palavraselecionada) {
+        return hint;
+      }
+    }
+
+    return "";
+  }
+
+
   void extractCrosswordWords() {
     List<WordPosition> wordPositions = findWordPositions(solution);
     Map<String, String> wordHintsMap = getWordHintsMap();
@@ -135,12 +171,12 @@ class PuzFile {
     // Imprimir a lista de palavras
     print('Words Across:');
     for (Word word in wordsAcross!) {
-      print('${word.position}: ${word.hint}');
+      print('${word.hint}');
     }
 
     print('Words Down:');
     for (Word word in wordsDown!) {
-      print('${word.position}: ${word.hint}');
+      print('${word.hint}');
     }
   }
 
