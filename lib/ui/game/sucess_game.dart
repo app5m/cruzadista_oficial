@@ -53,7 +53,7 @@ class _SucessGameState extends State<SucessGame> {
                 backgroundColor: Colors.black,
               ),
               child: Text(
-                "Continua",
+                "Voltar",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: FontSizes.textoNormal,

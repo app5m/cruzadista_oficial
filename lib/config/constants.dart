@@ -20,6 +20,7 @@ class WSConstantes {
   static const String RECOVERRY_PASSWORD = "usuarios/recuperarsenha";
   static const String SAVE_FCM = "usuarios/savefcm";
   static const String STATISTICS = "cruzadas/estatisticas";
+  static const String LISTNIVEIS = "cruzadas/listNiveis";
   static const String NOTIFICATION = "usuarios/Notificacoes";
   static const String LIST_CRUZADISTA = "cruzadas/listCruzadas";
   static const String ZERA_CRUZADA = "cruzadas/zerar";

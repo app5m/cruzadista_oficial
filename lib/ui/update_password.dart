@@ -24,6 +24,14 @@ class _UpdatePasswordState extends State<UpdatePassword> {
   TextEditingController _passwordUpdateController = TextEditingController();
   TextEditingController _coPasswordUpdateController = TextEditingController();
 
+  String password = '';
+  String passwordConfig = '';
+  bool hasPasswordCoPassword = false;
+  bool hasUppercase = false;
+  bool hasMinLength = false;
+  bool visibileOne = false;
+  bool visibileTwo = false;
+
   Future<String?> updatePassword(String password, String coPassword) async {
     await Preferences.init();
     var _userId = await Preferences.getUserData()!.id;
@@ -133,7 +141,18 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                       child: Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        child: TextField(
+                        child: TextFormField(
+                          onChanged: (value) {
+                            setState(() {
+                              password = value;
+                              visibileOne = true;
+                              hasMinLength = password.length >= 8;
+                              hasUppercase = password.contains(RegExp(r'[A-Z]'));
+                              if (hasMinLength && hasUppercase) {
+                                visibileOne = false;
+                              }
+                            });
+                          },
                           controller: _passwordUpdateController,
                           obscureText: true,
                           decoration: InputDecoration(
@@ -141,6 +160,47 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                             hintText: 'Senha',
                           ),
                         ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Visibility(
+                    visible: password.isNotEmpty,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          Icon(
+                            hasMinLength
+                                ? Icons.check_circle
+                                : Icons.check_circle,
+                            color: hasMinLength ? Colors.green : Colors.grey,
+                          ),
+                          Text(
+                            'Deve ter no mínimo 8 carácteres',
+                            style: TextStyle(color: Color(0xFF000000)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: password.isNotEmpty,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          Icon(
+                            hasUppercase
+                                ? Icons.check_circle
+                                : Icons.check_circle,
+                            color: hasUppercase ? Colors.green : Colors.grey,
+                          ),
+                          Text(
+                            'Deve ter uma letra maiúscula',
+                            style: TextStyle(color: Color(0xFF000000)),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -158,7 +218,18 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                       child: Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        child: TextField(
+                        child: TextFormField(
+                          onChanged: (value) {
+                            setState(() {
+                              visibileTwo = true;
+                              passwordConfig = value;
+                              hasPasswordCoPassword = passwordConfig == password;
+
+                              if (hasPasswordCoPassword) {
+                                visibileTwo = false;
+                              }
+                            });
+                          },
                           controller: _coPasswordUpdateController,
                           obscureText: true,
                           decoration: InputDecoration(
@@ -166,6 +237,29 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                             hintText: 'Confirmar senha',
                           ),
                         ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Visibility(
+                    visible: passwordConfig.isNotEmpty,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          Icon(
+                            hasPasswordCoPassword
+                                ? Icons.check_circle
+                                : Icons.check_circle,
+                            color: hasPasswordCoPassword
+                                ? Colors.green
+                                : Colors.grey,
+                          ),
+                          Text(
+                            'As senhas fornecidas são idênticas',
+                            style: TextStyle(color: Color(0xFF000000)),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -206,6 +300,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                       ),
                     ),
                   ),
+
                 ],
               )
             ],

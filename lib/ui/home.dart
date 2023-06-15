@@ -34,6 +34,7 @@ class _HomeState extends State<Home> {
   String? pendentesValue = '';
   bool _listTyper = false;
   bool _dificScreen = false;
+  List<Cruzada> niveis = [];
 
   final List<Cruzada> crossWords = [];
   final List<Cruzada> crossWordsFinalizadas = [];
@@ -64,7 +65,7 @@ class _HomeState extends State<Home> {
       WSConstantes.TOKENID: WSConstantes.TOKEN
     };
     final response =
-    await requestsWebServices.sendPostRequest(WSConstantes.SAVE_FCM, body);
+        await requestsWebServices.sendPostRequest(WSConstantes.SAVE_FCM, body);
 
     print('FCM: $currentFcmToken');
     print('RESPOSTA: $response');
@@ -94,7 +95,7 @@ class _HomeState extends State<Home> {
 
       setState(() {
         nameUser = user.name!;
-       // avatarUser = WSConstantes.URL_AVATAR + user.avatar!;
+        // avatarUser = WSConstantes.URL_AVATAR + user.avatar!;
       });
 
       print(
@@ -136,6 +137,31 @@ class _HomeState extends State<Home> {
     }
   }
 
+  Future<void> getListNiveis() async {
+    try {
+      await Preferences.init();
+      final body = {WSConstantes.TOKENID: WSConstantes.TOKEN};
+
+      //final Map<String, dynamic> decodedResponse = await requestsWebServices.sendPostRequestList(WSConstantes.STATISTICS, body);
+      final List<dynamic> decodedResponse = await requestsWebServices
+          .sendPostRequestList(WSConstantes.LISTNIVEIS, body);
+      if (decodedResponse.isNotEmpty) {
+        niveis.clear();
+        for (final iten in decodedResponse) {
+          final nivel = Cruzada(
+            name: iten['nome'],
+            id: iten['id'],
+          );
+          niveis.add(nivel);
+        }
+      } else {
+        print('NULO');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<void> getListCruazadist(int type, int idNivel) async {
     try {
       await Preferences.init();
@@ -159,9 +185,14 @@ class _HomeState extends State<Home> {
                 image: 'images/logoadapter.png',
                 id: item['id'],
                 url: item['url'],
+                rows: item['rows'],
               );
+              if (crossWord.rows != 0) {
+                crossWords.add(crossWord);
+              } else {
+                crossWords.clear();
+              }
 
-              crossWords.add(crossWord);
               print(crossWords);
             }
           });
@@ -187,8 +218,13 @@ class _HomeState extends State<Home> {
                 id: item['id'],
                 url: item['url'],
                 status: item['status'].toString(),
+                rows: item['rows'],
               );
-              crossWordsFinalizadas.add(crossWord);
+              if (crossWord.rows != 0) {
+                crossWordsFinalizadas.add(crossWord);
+              } else {
+                crossWordsFinalizadas.clear();
+              }
             }
           });
         } else {
@@ -214,7 +250,6 @@ class _HomeState extends State<Home> {
       final List<dynamic> decodedResponse = await requestsWebServices
           .sendPostRequestList(WSConstantes.NOTIFICATION, body);
       if (decodedResponse.isNotEmpty) {
-
         setState(() {
           notifications.clear();
           for (final item in decodedResponse) {
@@ -226,27 +261,30 @@ class _HomeState extends State<Home> {
               rows: item['rows'],
             );
             print('rows: ${notification.rows}');
-            if(notification.rows == 0){
+            if (notification.rows == 0) {
               notifications.clear();
-            }else{
+            } else {
               notifications.add(notification);
             }
-
           }
 
-          int getListNotifyDataCompare = Preferences.getUnreadNotificationsCount();
-          print("$getListNotifyDataCompare aqui e o que ta salvo no preference");
-          if(getListNotifyDataCompare != 0){
-            unreadNotificationsCount = (notifications.length - getListNotifyDataCompare);
-            print("cai aqui (_notifications.length - getListNotifyDataCompare) =  $unreadNotificationsCount");
-          }else{
+          int getListNotifyDataCompare =
+              Preferences.getUnreadNotificationsCount();
+          print(
+              "$getListNotifyDataCompare aqui e o que ta salvo no preference");
+          if (getListNotifyDataCompare != 0) {
+            unreadNotificationsCount =
+                (notifications.length - getListNotifyDataCompare);
+            print(
+                "cai aqui (_notifications.length - getListNotifyDataCompare) =  $unreadNotificationsCount");
+          } else {
             unreadNotificationsCount = notifications.length;
           }
-          print("$unreadNotificationsCount aqui e total antes de chega no badge");
-
+          print(
+              "$unreadNotificationsCount aqui e total antes de chega no badge");
+          print("Tamanho da tela:${MediaQuery.of(context).size.width}");
         });
-
-
+        getListNiveis();
       } else {
         print('NULO');
       }
@@ -268,14 +306,12 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    if (unreadNotificationsCount == null){
+    if (unreadNotificationsCount == null) {
       notificationsCount = "0";
-
-    }else{
-      if (unreadNotificationsCount! > 9){
+    } else {
+      if (unreadNotificationsCount! > 9) {
         notificationsCount = "9+";
-
-      }else{
+      } else {
         notificationsCount = unreadNotificationsCount.toString();
       }
     }
@@ -310,7 +346,8 @@ class _HomeState extends State<Home> {
                       elevation: 8,
                       shape: CircleBorder(),
                       child: CircleAvatar(
-                        backgroundImage: ExactAssetImage('images/usercruzadista.png'),
+                        backgroundImage:
+                            ExactAssetImage('images/usercruzadista.png'),
 
                         // ExactAssetImage('images/avatar.png'),
                         radius: 30,
@@ -321,7 +358,6 @@ class _HomeState extends State<Home> {
                   SizedBox(
                     width: 8,
                   ),
-
                   InkWell(
                     onTap: () {
                       Navigator.pushNamed(context, "/ui/notification");
@@ -387,148 +423,45 @@ class _HomeState extends State<Home> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Container(
-                    width: 130,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.black,
-                          Color(0xff424242),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 8,
-                      color: Colors.transparent,
-                      child: Container(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              totalValue!,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                            Text(
-                              'Total',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                          ],
+                  MediaQuery.of(context).size.width > 380
+                      ? buildContainer(
+                          width: 130,
+                          totalValue: totalValue!,
+                          nameValeu: "Total",
+                          fontSize: 15,
+                        )
+                      : buildContainer(
+                          width: 100,
+                          totalValue: totalValue!,
+                          nameValeu: "Total",
+                          fontSize: 10,
                         ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 130,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.black,
-                          Color(0xff424242),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 8,
-                      color: Colors.transparent,
-                      child: Container(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              finalizadasValue!,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                            Text(
-                              'Finalizadas',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                          ],
+                  MediaQuery.of(context).size.width > 380
+                      ? buildContainer(
+                          width: 130,
+                          totalValue: finalizadasValue!,
+                          nameValeu: "Finalizadas",
+                          fontSize: 15,
+                        )
+                      : buildContainer(
+                          width: 100,
+                          totalValue: finalizadasValue!,
+                          nameValeu: "Finalizadas",
+                          fontSize: 10,
                         ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 130,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.black,
-                          Color(0xff424242),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 8,
-                      color: Colors.transparent,
-                      child: Container(
-                        width: 130,
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              pendentesValue!,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                            Text(
-                              'Pendentes',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                          ],
+                  MediaQuery.of(context).size.width > 380
+                      ? buildContainer(
+                          width: 130,
+                          totalValue: pendentesValue!,
+                          nameValeu: "Pendentes",
+                          fontSize: 15,
+                        )
+                      : buildContainer(
+                          width: 100,
+                          totalValue: pendentesValue!,
+                          nameValeu: "Pendentes",
+                          fontSize: 10,
                         ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
               SizedBox(
@@ -536,16 +469,16 @@ class _HomeState extends State<Home> {
               ),
               Row(
                 children: [
-                  Visibility(visible: _dificScreen,
+                  Visibility(
+                      visible: _dificScreen,
                       child: InkWell(
                         onTap: () {
                           _dificScreen = false;
-                          if(_selectedIndex == 0){
+                          if (_selectedIndex == 0) {
                             getListCruazadist(1, 0);
-                          }else{
+                          } else {
                             getListCruazadist(2, 0);
                           }
-
                         },
                         child: Card(
                           margin: EdgeInsets.all(0),
@@ -568,7 +501,10 @@ class _HomeState extends State<Home> {
                                     fontFamily: 'Poppins',
                                   ),
                                 ),
-                                Icon(Icons.close, color: Colors.black,),
+                                Icon(
+                                  Icons.close,
+                                  color: Colors.black,
+                                ),
                               ],
                             ),
                           ),
@@ -582,17 +518,13 @@ class _HomeState extends State<Home> {
                       showDialog(
                         context: context,
                         builder: (_) => DialogDific(
+                          listNiveis: niveis,
                           screenType: _selectedIndex,
-                          onDifficultySelected: (int type, int level) {
+                          onDifficultySelected:
+                              (int type, int level, String nameDific) {
                             getListCruazadist(type, level);
                             _dificScreen = true;
-                            if(level == 1){
-                              dific = "Fácil";
-                            }else if(level == 2){
-                              dific = "Médio";
-                            }else if(level == 3){
-                              dific = "Difícil";
-                            }
+                            dific = nameDific;
                           },
                         ),
                       );
@@ -668,7 +600,7 @@ class _HomeState extends State<Home> {
                     ),
                     splashColor: Colors.transparent,
                     highlightColor:
-                    _selectedIndex == 0 ? Colors.black : Colors.transparent,
+                        _selectedIndex == 0 ? Colors.black : Colors.transparent,
                   ),
                   InkWell(
                     onTap: () {
@@ -704,7 +636,7 @@ class _HomeState extends State<Home> {
                     ),
                     splashColor: Colors.transparent,
                     highlightColor:
-                    _selectedIndex == 1 ? Colors.black : Colors.transparent,
+                        _selectedIndex == 1 ? Colors.black : Colors.transparent,
                   ),
                 ],
               ),
@@ -712,12 +644,40 @@ class _HomeState extends State<Home> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16, right: 16),
-                    child: GridView.count(
-                      crossAxisCount: 2, // Define duas colunas
-                      children: List.generate(crossWords.length, (index) {
-                        return MyCard(crossWordL: crossWords[index]);
-                      }),
-                    ),
+                    child: LayoutBuilder(builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      if (crossWords.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Lottie.asset('animation/empty.json',
+                                  repeat: true,
+                                  reverse: true,
+                                  animate: true,
+                                  width: 150,
+                                  height: 150),
+                              Text(
+                                'Nenhuma cruzada encontrada',
+                                style: TextStyle(
+                                  fontSize: FontSizes.subTitulo,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return GridView.count(
+                          crossAxisCount: 2, // Define duas colunas
+                          children: List.generate(crossWords.length, (index) {
+                            return MyCard(crossWordL: crossWords[index]);
+                          }),
+                        );
+                      }
+                    }),
                   ),
                 ),
               if (_selectedIndex == 1)
@@ -737,14 +697,16 @@ class _HomeState extends State<Home> {
                                     repeat: true,
                                     reverse: true,
                                     animate: true,
-                                    width: 250,
-                                    height: 250),
-                                Text('Nenhuma cruzada encontrada',
+                                    width: 150,
+                                    height: 150),
+                                Text(
+                                  'Nenhuma cruzada encontrada',
                                   style: TextStyle(
                                     fontSize: FontSizes.subTitulo,
                                     fontWeight: FontWeight.w600,
                                     fontFamily: 'Poppins',
-                                  ),),
+                                  ),
+                                ),
                               ],
                             ),
                           );
@@ -786,11 +748,14 @@ class MyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-
         print(crossWordL.url);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Game(cruzada: crossWordL,)));
-       // Navigator.pushNamed(context, "/ui/game");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Game(
+                      cruzada: crossWordL,
+                    )));
+        // Navigator.pushNamed(context, "/ui/game");
       },
       child: Card(
         margin: EdgeInsets.only(left: 8, right: 8, bottom: 8),
@@ -813,6 +778,120 @@ class MyCard extends StatelessWidget {
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600),
                 textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    Widget buildContainer(double width, String totalValue) {
+      return Container(
+        width: width,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.black,
+              Color(0xff424242),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 8,
+          color: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  totalValue!,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+                Text(
+                  'Total',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+  }
+}
+
+class buildContainer extends StatelessWidget {
+  double width;
+  String totalValue;
+  String nameValeu;
+  double fontSize;
+
+  buildContainer(
+      {super.key,
+      required this.width,
+      required this.totalValue,
+      required this.nameValeu,
+      required this.fontSize});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.black,
+            Color(0xff424242),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        elevation: 8,
+        color: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                totalValue!,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              Text(
+                nameValeu,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                ),
               ),
             ],
           ),

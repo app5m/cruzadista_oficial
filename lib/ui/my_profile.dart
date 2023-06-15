@@ -54,7 +54,10 @@ class _MyProfileState extends State<MyProfile> {
         _nameUpdateController.text = user.name!;
         _emailUpdateController.text = user.email!;
         _cellphoneUpdateController.text = user.cellphone!;
-        _birthUpdateController.text = user.birth!;
+        if(user.birth! != "//"){
+          _birthUpdateController.text = user.birth!;
+        }
+
       });
 
       print(
@@ -64,6 +67,11 @@ class _MyProfileState extends State<MyProfile> {
 
   var maskFormatter = new MaskTextInputFormatter(
       mask: '(##) #####-####',
+      filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.lazy);
+
+  var maskFormatterBrith = new MaskTextInputFormatter(
+      mask: '##/##/####',
       filter: {"#": RegExp(r'[0-9]')},
       type: MaskAutoCompletionType.lazy);
 
@@ -223,6 +231,7 @@ class _MyProfileState extends State<MyProfile> {
                         padding:
                         EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         child: TextField(
+                          keyboardType: TextInputType.number,
                           controller: _cellphoneUpdateController,
                           inputFormatters: [maskFormatter],
                           decoration: InputDecoration(
@@ -248,7 +257,9 @@ class _MyProfileState extends State<MyProfile> {
                         padding:
                         EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         child: TextField(
+                          keyboardType: TextInputType.number,
                           controller: _birthUpdateController,
+                          inputFormatters: [maskFormatterBrith],
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Data nascimento',

@@ -478,6 +478,7 @@ class _LoginState extends State<Login> {
                               EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: TextField(
                             inputFormatters: [maskFormatter],
+                            keyboardType: TextInputType.number,
                             controller: _celularRegistreController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -820,7 +821,7 @@ class _LoginState extends State<Login> {
                                     strokeWidth: 3,
                                   ) // ou qualquer indicador de carregamento desejado
                                 : Text(
-                                    "CADASTRA-SE",
+                                    "CADASTRAR",
                                     style: TextStyle(
                                         color: MyColors.colorOnPrimary,
                                         fontFamily: 'Poppins',

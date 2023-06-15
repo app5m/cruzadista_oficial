@@ -5,9 +5,11 @@ import 'package:cruzadista/components/alert_dialog_generic.dart';
 import 'package:cruzadista/components/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_share/flutter_share.dart';
 
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../components/fonte_size.dart';
 import '../config/constants.dart';
@@ -221,7 +223,9 @@ class _MenuState extends State<Menu> {
                       )
                     ],
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    share();
+                  },
                 ),
                 InkWell(
                   child: Row(
@@ -251,7 +255,7 @@ class _MenuState extends State<Menu> {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        'Zerar Prtogresso',
+                        'Zerar Progresso',
                         style: TextStyle(
                           fontSize: FontSizes.subTitulo,
                           fontWeight: FontWeight.w500,
@@ -616,5 +620,99 @@ class _MenuState extends State<Menu> {
         );
       },
     );
+  }
+
+  void _showModalBottomSheetShared(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
+      )),
+      builder: (BuildContext bc) {
+        return Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Compatilhar jogo",
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Color(0xff000000)),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Baixe o APP Cruzadista nas lojas PLAY STORE ou APP STORE e divirta-se!",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Color(0xff000000)),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Spacer(),
+                        ElevatedButton(
+                          onPressed: () {
+                            share();
+                          },
+                          child: Text("Sim"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff000000),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(
+                            "Não",
+                            style: TextStyle(color: Color(0xff000000)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16)
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> share() async {
+    await FlutterShare.share(
+        title: 'Cruzadista',
+        text: 'Baixe o APP Cruzadista nas lojas PLAY STORE ou APP STORE e divirta-se!',
+        linkUrl: 'https://flutter.dev/',
+        chooserTitle: 'Example Chooser Title');
   }
 }
