@@ -1,4 +1,3 @@
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -6,7 +5,7 @@ import '../model/notification.dart';
 
 class LocalNotification {
   static final FlutterLocalNotificationsPlugin _notiPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   static void initialize() {
     final InitializationSettings initialSettings = InitializationSettings(
@@ -16,15 +15,13 @@ class LocalNotification {
     );
     _notiPlugin.initialize(initialSettings,
         onDidReceiveNotificationResponse: (NotificationResponse details) {
-          print('onDidReceiveNotificationResponse Function');
-          print(details.payload);
-          print(details.payload != null);
-        });
+      print('onDidReceiveNotificationResponse Function');
+      print(details.payload);
+      print(details.payload != null);
+    });
   }
 
   static void showNotification(RemoteMessage message) {
-    // {titulo: Atualização do status do pedido, type: new_ticket, descricao: O pedido de número #212 foi atualizado para Enviado}
-
     NotificationPop notification = NotificationPop.fromJson(message.data);
 
     print(" dados da notificaçao ${message.data}");
@@ -38,9 +35,7 @@ class LocalNotification {
       ),
     );
     _notiPlugin.show(
-      DateTime
-          .now()
-          .microsecond,
+      DateTime.now().microsecond,
       notification.title,
       notification.description,
       notiDetails,
@@ -48,5 +43,3 @@ class LocalNotification {
     );
   }
 }
-
-//ADAS

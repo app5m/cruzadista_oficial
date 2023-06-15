@@ -774,6 +774,7 @@ class _GameState extends State<Game> {
                             },
                             itemCount: puzFile.width * puzFile.height,
                           ),
+                        SizedBox(height: 8,),
                         Container(
                           margin: EdgeInsets.symmetric(vertical: 0),
                           child: Column(
