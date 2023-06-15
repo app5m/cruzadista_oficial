@@ -327,16 +327,9 @@ class _HomeState extends State<Home> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: Text(
-                      'Olá,\n$nameUser',
-                      style: TextStyle(
-                          fontSize: FontSizes.titulo,
-                          fontWeight: FontWeight.w500),
-                    ),
+                  SizedBox(
+                    width: 8,
                   ),
-                  Spacer(),
                   InkWell(
                     onTap: () {
                       Navigator.pushNamed(context, "/ui/menu");
@@ -347,10 +340,10 @@ class _HomeState extends State<Home> {
                       shape: CircleBorder(),
                       child: CircleAvatar(
                         backgroundImage:
-                            ExactAssetImage('images/usercruzadista.png'),
+                        ExactAssetImage('images/usercruzadista.png'),
 
                         // ExactAssetImage('images/avatar.png'),
-                        radius: 30,
+                        radius: 22,
                         backgroundColor: MyColors.grayLite,
                       ),
                     ),
@@ -358,6 +351,16 @@ class _HomeState extends State<Home> {
                   SizedBox(
                     width: 8,
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 0),
+                    child: Text(
+                      'Olá,\n$nameUser',
+                      style: TextStyle(
+                          fontSize: FontSizes.titulo,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Spacer(),
                   InkWell(
                     onTap: () {
                       Navigator.pushNamed(context, "/ui/notification");
@@ -429,12 +432,14 @@ class _HomeState extends State<Home> {
                           totalValue: totalValue!,
                           nameValeu: "Total",
                           fontSize: 15,
+                    fontSizeNumber: 16,
                         )
                       : buildContainer(
                           width: 100,
                           totalValue: totalValue!,
                           nameValeu: "Total",
-                          fontSize: 10,
+                          fontSize: 9,
+                    fontSizeNumber: 13,
                         ),
                   MediaQuery.of(context).size.width > 380
                       ? buildContainer(
@@ -442,12 +447,14 @@ class _HomeState extends State<Home> {
                           totalValue: finalizadasValue!,
                           nameValeu: "Finalizadas",
                           fontSize: 15,
+                    fontSizeNumber: 16,
                         )
                       : buildContainer(
                           width: 100,
                           totalValue: finalizadasValue!,
                           nameValeu: "Finalizadas",
-                          fontSize: 10,
+                          fontSize: 9,
+                    fontSizeNumber: 13,
                         ),
                   MediaQuery.of(context).size.width > 380
                       ? buildContainer(
@@ -455,12 +462,14 @@ class _HomeState extends State<Home> {
                           totalValue: pendentesValue!,
                           nameValeu: "Pendentes",
                           fontSize: 15,
+                    fontSizeNumber: 16,
                         )
                       : buildContainer(
                           width: 100,
                           totalValue: pendentesValue!,
                           nameValeu: "Pendentes",
-                          fontSize: 10,
+                          fontSize: 9,
+                    fontSizeNumber: 13,
                         ),
                 ],
               ),
@@ -841,13 +850,15 @@ class buildContainer extends StatelessWidget {
   String totalValue;
   String nameValeu;
   double fontSize;
+  double fontSizeNumber;
 
   buildContainer(
       {super.key,
       required this.width,
       required this.totalValue,
       required this.nameValeu,
-      required this.fontSize});
+      required this.fontSize,
+      required this.fontSizeNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -878,7 +889,7 @@ class buildContainer extends StatelessWidget {
               Text(
                 totalValue!,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: fontSizeNumber,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
                   fontFamily: 'Poppins',

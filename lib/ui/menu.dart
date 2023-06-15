@@ -712,7 +712,7 @@ class _MenuState extends State<Menu> {
     await FlutterShare.share(
         title: 'Cruzadista',
         text: 'Baixe o APP Cruzadista nas lojas PLAY STORE ou APP STORE e divirta-se!',
-        linkUrl: 'https://flutter.dev/',
+        linkUrl: '',
         chooserTitle: 'Example Chooser Title');
   }
 }
