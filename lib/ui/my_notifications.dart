@@ -175,7 +175,7 @@ class ItensNotification extends StatelessWidget {
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,11 +188,13 @@ class ItensNotification extends StatelessWidget {
                           style: TextStyle(
                               color: MyColors.colorPrimary,
                               fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600),
+                              fontWeight: FontWeight.w600,
+                          fontSize: 13),
                         ),
                         Text(
                           notification.date!,
-                          style: TextStyle(color: MyColors.colorPrimary),
+                          style: TextStyle(color: MyColors.colorPrimary, fontSize: 10),
+
                         ),
                       ],
                     ),
