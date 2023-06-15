@@ -8,10 +8,12 @@ class LocalNotification {
       FlutterLocalNotificationsPlugin();
 
   static void initialize() {
+    const iosInitializationSetting = DarwinInitializationSettings();
     final InitializationSettings initialSettings = InitializationSettings(
       android: AndroidInitializationSettings(
         '@mipmap/ic_launcher',
       ),
+      iOS: iosInitializationSetting,
     );
     _notiPlugin.initialize(initialSettings,
         onDidReceiveNotificationResponse: (NotificationResponse details) {
@@ -25,7 +27,7 @@ class LocalNotification {
     NotificationPop notification = NotificationPop.fromJson(message.data);
 
     print(" dados da notificaçao ${message.data}");
-
+    const iosNotificatonDetail = DarwinNotificationDetails();
     final NotificationDetails notiDetails = NotificationDetails(
       android: AndroidNotificationDetails(
         'br.com.cruzadista.app.push_notification',
@@ -33,6 +35,7 @@ class LocalNotification {
         importance: Importance.max,
         priority: Priority.high,
       ),
+      iOS: iosNotificatonDetail
     );
     _notiPlugin.show(
       DateTime.now().microsecond,
