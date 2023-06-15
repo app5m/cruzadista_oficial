@@ -524,7 +524,7 @@ class _GameState extends State<Game> {
                             ),
                           ),
                           SizedBox(
-                            width: 16,
+                            width: 8,
                           ),
                         ],
                       )
@@ -774,7 +774,7 @@ class _GameState extends State<Game> {
                             },
                             itemCount: puzFile.width * puzFile.height,
                           ),
-                        SizedBox(height: 8,),
+                        SizedBox(height: 2,),
                         Container(
                           margin: EdgeInsets.symmetric(vertical: 0),
                           child: Column(
@@ -785,7 +785,7 @@ class _GameState extends State<Game> {
                                   color: _colorCell == Colors.white
                                       ? Colors.black
                                       : _colorCell,
-                                  fontSize: 18,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 textAlign: TextAlign.center,
@@ -796,7 +796,7 @@ class _GameState extends State<Game> {
                         if (!isGameCompleted())
                           Container(
                             width: double.infinity,
-                            margin: EdgeInsets.all(16),
+                            margin: EdgeInsets.only(left: 16, right: 16, bottom: 0),
                             child: Align(
                               alignment: Alignment.center,
                               child: GridView.builder(
