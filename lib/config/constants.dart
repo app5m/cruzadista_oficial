@@ -41,11 +41,17 @@ class WSConstantes {
   static const String TOKENID = "token";
 
   /**:::Validações:::**/
-  static const String MSG_NOME_INVALIDO = 'Nome inválido, tente novamente';
+  static const String MSG_NOME_INVALIDO = 'Preencha o campo Nome';
+  static const String MSG_EMAIL_EMPTY = 'Preencha o campo E-mail';
+  static const String MSG_USUARIO_EMPTY = 'Preencha o campo Usuário';
   static const String MSG_EMAIL_INVALIDO = 'Email inválido, tente novamente';
-  static const String MSG_PASSWORD_INVALIDO = 'A senha deve ter pelo menos 6 caracteres';
+  static const String MSG_ORGAN_INVALIDO = 'Selecione o Orgão';
+  static const String MSG_PASSWORD_INVALIDO = 'Senha inválida, tente novamente';
+  static const String MSG_PASSWORD_EMPTY = 'Preencha o campo Senha';
   static const String MSG_PHONE_INVALIDO = 'Celular inválido, tente novamente';
+  static const String MSG_PHONE_EMPTY = 'Preencha o campo Celular';
   static const String MSG_CO_PASSWORD_INVALIDO = 'As senhas fornecidas não são idênticas, por favor, verifique-as e tente novamente';
+  static const String MSG_CO_PASSWORD_EMPTY = 'Preencha o campo Confirmar Senha';
 
   /**:::INICIA FIREBASE NO IOS:::**/
   static const String API_KEY = 'AIzaSyC29OHcYG-evZDs1_POKS7yjI_eZlWCsDk';

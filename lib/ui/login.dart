@@ -895,7 +895,7 @@ class _LoginState extends State<Login> {
     } else if (!validationEmail(email)) {
       setState(() {
         Fluttertoast.showToast(
-          msg: WSConstantes.MSG_EMAIL_INVALIDO,
+          msg: WSConstantes.MSG_EMAIL_EMPTY,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
         );
@@ -905,14 +905,24 @@ class _LoginState extends State<Login> {
     } else if (phone.isEmpty) {
       setState(() {
         Fluttertoast.showToast(
-          msg: WSConstantes.MSG_PHONE_INVALIDO,
+          msg: WSConstantes.MSG_PHONE_EMPTY,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
         );
         isLoadingLogin = false;
         validation = false;
       });
-    } else if (password.isEmpty || password.length < 6) {
+    }else if (password.isEmpty) {
+      setState(() {
+        Fluttertoast.showToast(
+          msg: WSConstantes.MSG_PASSWORD_EMPTY,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        isLoadingLogin = false;
+        validation = false;
+      });
+    } else if (password.length < 8) {
       setState(() {
         Fluttertoast.showToast(
           msg: WSConstantes.MSG_PASSWORD_INVALIDO,
@@ -922,7 +932,17 @@ class _LoginState extends State<Login> {
         isLoadingLogin = false;
         validation = false;
       });
-    } else if (coPassword != password) {
+    } else if (coPassword.isEmpty) {
+      setState(() {
+        Fluttertoast.showToast(
+          msg: WSConstantes.MSG_CO_PASSWORD_EMPTY,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        isLoadingLogin = false;
+        validation = false;
+      });
+    }else if (coPassword != password) {
       setState(() {
         Fluttertoast.showToast(
           msg: WSConstantes.MSG_CO_PASSWORD_INVALIDO,
