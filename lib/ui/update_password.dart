@@ -23,7 +23,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
 
   TextEditingController _passwordUpdateController = TextEditingController();
   TextEditingController _coPasswordUpdateController = TextEditingController();
-
+  bool isLoading = false;
   String password = '';
   String passwordConfig = '';
   bool hasPasswordCoPassword = false;
@@ -59,6 +59,8 @@ class _UpdatePasswordState extends State<UpdatePassword> {
               gravity: ToastGravity.BOTTOM,
             );
             Navigator.pop(context);
+
+            isLoading = false;
           });
         } else {
           setState(() {
@@ -67,12 +69,12 @@ class _UpdatePasswordState extends State<UpdatePassword> {
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
             );
+            isLoading = false;
           });
         }
         print('Status ${user.status}, Mensagem: ${user.msg}');
       }
     }
-
   }
 
   bool validationPassword(String password, String coPassword) {
@@ -147,7 +149,8 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                               password = value;
                               visibileOne = true;
                               hasMinLength = password.length >= 8;
-                              hasUppercase = password.contains(RegExp(r'[A-Z]'));
+                              hasUppercase =
+                                  password.contains(RegExp(r'[A-Z]'));
                               if (hasMinLength && hasUppercase) {
                                 visibileOne = false;
                               }
@@ -223,7 +226,8 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                             setState(() {
                               visibileTwo = true;
                               passwordConfig = value;
-                              hasPasswordCoPassword = passwordConfig == password;
+                              hasPasswordCoPassword =
+                                  passwordConfig == password;
 
                               if (hasPasswordCoPassword) {
                                 visibileTwo = false;
@@ -274,11 +278,17 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            updatePassword(_passwordUpdateController.text,_coPasswordUpdateController.text);
+                            isLoading = true;
                           });
-
+                          updatePassword(_passwordUpdateController.text,
+                              _coPasswordUpdateController.text);
                         },
-                        child: Text(
+                        child: isLoading
+                            ? CircularProgressIndicator(
+                          color: MyColors.grayLite,
+                          strokeWidth: 3,
+                        )
+                            :  Text(
                           "ATUALIZAR SENHA",
                           style: TextStyle(
                               color: MyColors.colorOnPrimary,
@@ -300,7 +310,6 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                       ),
                     ),
                   ),
-
                 ],
               )
             ],

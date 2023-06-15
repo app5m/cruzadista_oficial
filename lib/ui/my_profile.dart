@@ -24,6 +24,7 @@ class _MyProfileState extends State<MyProfile> {
   var nameUser = '';
   var avatarUser = '';
   final user = User();
+  bool isLoading = false;
 
   TextEditingController _nameUpdateController = TextEditingController();
   TextEditingController _emailUpdateController = TextEditingController();
@@ -99,7 +100,9 @@ class _MyProfileState extends State<MyProfile> {
             msg: user.msg!,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
+
           );
+          isLoading = false;
           getUserData();
         });
       }else{
@@ -109,13 +112,11 @@ class _MyProfileState extends State<MyProfile> {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
           );
+          isLoading = false;
         });
 
 
       }
-
-
-
       print(
           'Status ${user.status}, Mensagem: ${user.msg}');
     }
@@ -278,10 +279,18 @@ class _MyProfileState extends State<MyProfile> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
+                          setState(() {
+                            isLoading = true;
+                          });
                           sendUserData(_cellphoneUpdateController.text, _nameUpdateController.text, _birthUpdateController.text);
                           //Navigator.pushNamed(context, "/ui/home");
                         },
-                        child: Text(
+                        child: isLoading
+                            ? CircularProgressIndicator(
+                          color: MyColors.grayLite,
+                          strokeWidth: 3,
+                        )
+                            : Text(
                           "ATUALIZAR DADOS",
                           style: TextStyle(
                               color: MyColors.colorOnPrimary,
