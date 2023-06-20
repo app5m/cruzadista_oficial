@@ -114,8 +114,6 @@ class _GameState extends State<Game> {
     }
   }
 
-
-
   @override
   void initState() {
     super.initState();
@@ -320,6 +318,37 @@ class _GameState extends State<Game> {
     return true;
   }
 
+  List<String> alphabet1 = [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "delete",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
+    "vertical/horizontal"
+  ];
+
 // Função para atualizar a palavra selecionada
   void updateSelectedWord(String word) {
     setState(() {
@@ -400,16 +429,13 @@ class _GameState extends State<Game> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-    if(widget.cruzada.status != null){
+    if (widget.cruzada.status != null) {
       revealAllWords();
       setState(() {
         isTyperFinish = false;
       });
-
     }
     return Scaffold(
       backgroundColor: _theme,
@@ -500,11 +526,13 @@ class _GameState extends State<Game> {
                                   colorCell: _theme,
                                   colorText: _colorCell,
                                   onContainerFilter: (bool reveletionWord,
-                                      bool reveletionLetter) {
+                                      bool reveletionLetter, bool reveletionGrade) {
                                     if (reveletionWord) {
                                       reveltionWord();
                                     } else if (reveletionLetter) {
                                       reveltionLetter();
+                                    }else if (reveletionGrade) {
+                                      revealAllWords();
                                     }
                                   },
                                 ),
@@ -582,23 +610,21 @@ class _GameState extends State<Game> {
                                   }
                                   lastTapTime = DateTime.now();
 
-                                  List<WordPosition> positionWords = puzFile
-                                      .findWordPositions(puzFile.solution);
-                                  WordPosition? positionWord =
-                                      findContainingWord(
-                                          positionWords, row, col);
+                                  List<WordPosition> positionWords = puzFile.findWordPositions(puzFile.solution);
+                                  WordPosition? positionWord = findContainingWord(positionWords, row, col);
 
                                   String selectedWord = '';
 
                                   if (puzFile.solution[row][col] != '.' &&
                                       positionWord != null &&
                                       ((isHorizontal &&
-                                          col >= positionWord.startCol &&
-                                          col <= positionWord.endCol) ||
+                                              col >= positionWord.startCol &&
+                                              col <= positionWord.endCol) ||
                                           (!isHorizontal &&
                                               row >= positionWord.startRow &&
                                               row <= positionWord.endRow))) {
-                                    wordHint = wordHintsMap[positionWord.toString()]!;
+                                    wordHint =
+                                        wordHintsMap[positionWord.toString()]!;
                                     if (startRow == -1 && startCol == -1) {
                                       // Início da seleção
                                       setState(() {
@@ -606,8 +632,7 @@ class _GameState extends State<Game> {
                                         startCol = positionWord.startCol;
                                         endRow = positionWord.endRow;
                                         endCol = positionWord.endCol;
-                                        print(
-                                            "inicio da Row: $startRow, inicio da Col: $startCol, fim da Row: $endRow, fim da Col: $endCol");
+                                        print("inicio da Row: $startRow, inicio da Col: $startCol, fim da Row: $endRow, fim da Col: $endCol");
                                       });
                                     } else {
                                       // Fim da seleção
@@ -618,8 +643,10 @@ class _GameState extends State<Game> {
                                             // Duplo clique detectado, selecionar verticalmente
                                             isHorizontal = false;
                                             int wordLength = 0;
-                                            while (row < puzFile.solution.length &&
-                                                puzFile.solution[row][col] != '.') {
+                                            while (row <
+                                                    puzFile.solution.length &&
+                                                puzFile.solution[row][col] !=
+                                                    '.') {
                                               wordLength++;
                                               row++;
                                             }
@@ -652,10 +679,18 @@ class _GameState extends State<Game> {
                                               endCol = col;
                                               startRow = positionWord.startRow;
                                               endRow = positionWord.startRow;
-                                              while (startRow > 0 && puzFile.solution[startRow - 1][col] != '.') {
+                                              while (startRow > 0 &&
+                                                  puzFile.solution[startRow - 1]
+                                                          [col] !=
+                                                      '.') {
                                                 startRow--;
                                               }
-                                              while (endRow < puzFile.solution.length - 1 && puzFile.solution[endRow + 1][col] != '.') {
+                                              while (endRow <
+                                                      puzFile.solution.length -
+                                                          1 &&
+                                                  puzFile.solution[endRow + 1]
+                                                          [col] !=
+                                                      '.') {
                                                 endRow++;
                                               }
                                             }
@@ -675,18 +710,26 @@ class _GameState extends State<Game> {
 
                                   if (isHorizontal) {
                                     // Seleção horizontal
-                                    for (int colIndex = startCol; colIndex <= endCol; colIndex++) {
-                                      if (puzFile.solution[row][colIndex] != '.') {
-                                        selectedWord += puzFile.solution[row][colIndex];
+                                    for (int colIndex = startCol;
+                                        colIndex <= endCol;
+                                        colIndex++) {
+                                      if (puzFile.solution[row][colIndex] !=
+                                          '.') {
+                                        selectedWord +=
+                                            puzFile.solution[row][colIndex];
                                       } else {
                                         break;
                                       }
                                     }
                                   } else {
                                     // Seleção vertical
-                                    for (int rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
-                                      if (puzFile.solution[rowIndex][col] != '.') {
-                                        selectedWord += puzFile.solution[rowIndex][col];
+                                    for (int rowIndex = startRow;
+                                        rowIndex <= endRow;
+                                        rowIndex++) {
+                                      if (puzFile.solution[rowIndex][col] !=
+                                          '.') {
+                                        selectedWord +=
+                                            puzFile.solution[rowIndex][col];
                                       } else {
                                         break;
                                       }
@@ -698,7 +741,7 @@ class _GameState extends State<Game> {
 
                                   var wordCoordinates = "";
                                   setState(() {
-                                    updateSelectedWord(selectedWord);
+                                    // updateSelectedWord(selectedWord);
                                     wordHint =
                                         puzFile.extractHint(selectedWord);
                                     print("Palavra: ${selectedWord}");
@@ -774,7 +817,9 @@ class _GameState extends State<Game> {
                             },
                             itemCount: puzFile.width * puzFile.height,
                           ),
-                        SizedBox(height: 2,),
+                        SizedBox(
+                          height: 2,
+                        ),
                         Container(
                           margin: EdgeInsets.symmetric(vertical: 0),
                           child: Column(
@@ -796,7 +841,8 @@ class _GameState extends State<Game> {
                         if (!isGameCompleted())
                           Container(
                             width: double.infinity,
-                            margin: EdgeInsets.only(left: 16, right: 16, bottom: 0),
+                            margin:
+                                EdgeInsets.only(left: 16, right: 16, bottom: 0),
                             child: Align(
                               alignment: Alignment.center,
                               child: GridView.builder(
@@ -805,38 +851,58 @@ class _GameState extends State<Game> {
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount:
-                                      6, // Número de colunas do teclado
-                                  mainAxisSpacing: 8,
-                                  crossAxisSpacing: 8,
+                                      9, // Número de colunas do teclado
+                                  mainAxisSpacing: 4,
+                                  crossAxisSpacing: 2,
                                 ),
                                 itemBuilder: (context, index) {
-                                  String letter = keyboardLetters[index];
-                                  return ElevatedButton(
-                                    onPressed: () {
-                                      if (selectedWord.isNotEmpty &&
-                                          rowAll != -1 &&
-                                          colAll != -1) {
-                                        updatePlayerSolution(
-                                            rowAll, colAll, letter);
+                                  String letter = alphabet1[index];
+                                  if (letter == "delete") {
+                                    return IconButton(
+                                      onPressed: () {
+                                        // Lógica para apagar a letra selecionada
+                                        setState(() {
+                                          if (rowAll != -1 && colAll != -1) {
+                                            puzFile.playerSolution[rowAll]
+                                                [colAll] = '';
+                                          }
+                                        });
+                                      },
+                                      icon: Icon(Icons.backspace_outlined),
+                                      color: Colors.red,
+                                    );
+                                  } else if (letter == "vertical/horizontal") {
+                                    return IconButton(
+                                      onPressed: () {
+                                        // Lógica para apagar a letra selecionada
+                                        setState(() {
+                                          isHorizontal = !isHorizontal;
+                                        });
+                                      },
+                                      icon: Icon(Icons.rotate_left_outlined,),
+                                      color: Colors.red,
+                                    );
+                                  } else {
+                                    return TextButton(
+                                      onPressed: () {
+                                          setState(() {
+                                            updatePlayerSolution(
+                                                rowAll, colAll, letter);
+                                          });
 
-                                        // setState(() {
-                                        //   keyboardLetters.remove(letter);
-                                        //   keyboardLetters.add(selectedWord[0]);
-                                        //   keyboardLetters.shuffle();
-                                        //
-                                        // });
-                                      }
-                                    },
-                                    child: Text(
-                                      letter,
-                                      style: TextStyle(color: _colorCell),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.black,
-                                    ),
-                                  );
+                                      },
+                                      child: Text(
+                                        letter,
+                                        style: TextStyle(color: _colorCell),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: Colors.black,
+                                      ),
+                                    );
+                                  }
                                 },
-                                itemCount: keyboardLetters.length,
+                                itemCount: alphabet1.length,
                               ),
                             ),
                           ),

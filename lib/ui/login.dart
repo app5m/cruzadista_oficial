@@ -505,8 +505,8 @@ class _LoginState extends State<Login> {
                                 password = value;
                                 visibileOne = true;
                                 hasMinLength = password.length >= 8;
-                                hasUppercase = password.contains(RegExp(r'[A-Z]'));
-                                if (hasMinLength && hasUppercase) {
+
+                                if (hasMinLength) {
                                   visibileOne = false;
                                 }
                               });
@@ -533,23 +533,6 @@ class _LoginState extends State<Login> {
                             ),
                             Text(
                               'Deve ter no mínimo 8 carácteres',
-                              style: TextStyle(color: Color(0xFF000000)),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Visibility(
-                        visible: password.isNotEmpty,
-                        child: Row(
-                          children: [
-                            Icon(
-                              hasUppercase
-                                  ? Icons.check_circle
-                                  : Icons.check_circle,
-                              color: hasUppercase ? Colors.green : Colors.grey,
-                            ),
-                            Text(
-                              'Deve ter uma letra maiúscula',
                               style: TextStyle(color: Color(0xFF000000)),
                             ),
                           ],
@@ -897,16 +880,6 @@ class _LoginState extends State<Login> {
       setState(() {
         Fluttertoast.showToast(
           msg: WSConstantes.MSG_EMAIL_EMPTY,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-        );
-        isLoadingLogin = false;
-        validation = false;
-      });
-    } else if (phone.isEmpty) {
-      setState(() {
-        Fluttertoast.showToast(
-          msg: WSConstantes.MSG_PHONE_EMPTY,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
         );

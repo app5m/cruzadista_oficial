@@ -149,9 +149,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                               password = value;
                               visibileOne = true;
                               hasMinLength = password.length >= 8;
-                              hasUppercase =
-                                  password.contains(RegExp(r'[A-Z]'));
-                              if (hasMinLength && hasUppercase) {
+                              if (hasMinLength) {
                                 visibileOne = false;
                               }
                             });
@@ -181,26 +179,6 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                           ),
                           Text(
                             'Deve ter no mínimo 8 carácteres',
-                            style: TextStyle(color: Color(0xFF000000)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Visibility(
-                    visible: password.isNotEmpty,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        children: [
-                          Icon(
-                            hasUppercase
-                                ? Icons.check_circle
-                                : Icons.check_circle,
-                            color: hasUppercase ? Colors.green : Colors.grey,
-                          ),
-                          Text(
-                            'Deve ter uma letra maiúscula',
                             style: TextStyle(color: Color(0xFF000000)),
                           ),
                         ],
