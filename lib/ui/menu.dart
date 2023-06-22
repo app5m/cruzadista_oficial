@@ -18,7 +18,8 @@ import '../config/requests.dart';
 import '../model/user.dart';
 
 class Menu extends StatefulWidget {
-  const Menu({Key? key}) : super(key: key);
+  bool? isloggin;
+  Menu({Key? key, this.isloggin}) : super(key: key);
 
   @override
   State<Menu> createState() => _MenuState();
@@ -26,7 +27,7 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
-
+  bool isLoggedIn = false;
   Future<String?> zeraProgress() async {
     await Preferences.init();
     var _userId = await Preferences.getUserData()!.id;
@@ -109,8 +110,21 @@ class _MenuState extends State<Menu> {
     }
   }
 
+  Future<void> initilPreferences() async {
+    await Preferences.init();
+    isLoggedIn = await Preferences.getLogin();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initilPreferences();
+  }
+
   @override
   Widget build(BuildContext context) {
+    isLoggedIn = widget.isloggin!;
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.only(top: 50),
@@ -145,7 +159,8 @@ class _MenuState extends State<Menu> {
             SizedBox(height: 16),
             Column(
               children: [
-                InkWell(
+                if(isLoggedIn)
+                  InkWell(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -227,7 +242,8 @@ class _MenuState extends State<Menu> {
                     share();
                   },
                 ),
-                InkWell(
+                if(isLoggedIn)
+                  InkWell(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -268,7 +284,8 @@ class _MenuState extends State<Menu> {
                     _showModalBottomSheetZero(context);
                   },
                 ),
-                InkWell(
+                if(isLoggedIn)
+                  InkWell(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -309,7 +326,8 @@ class _MenuState extends State<Menu> {
                     _showModalBottomSheetDesative(context);
                   },
                 ),
-                InkWell(
+                if(isLoggedIn)
+                  InkWell(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -350,6 +368,52 @@ class _MenuState extends State<Menu> {
                     _showModalBottomSheetExit(context);
                   },
                 ),
+                if(!isLoggedIn)
+                  InkWell(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Card(
+                              color: MyColors.colorPrimary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(8),
+                                    bottomRight: Radius.circular(8)),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 2, right: 2),
+                                child: SizedBox(
+                                  width: 1,
+                                  height: 50,
+                                ),
+                              )),
+                        ),
+                        SvgPicture.asset(
+                          'icons/login.svg',
+                          height: 35,
+                          width: 35,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: FontSizes.subTitulo,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins',
+                          ),
+                        )
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/ui/login',
+                            (Route<dynamic> route) => false,
+                      );
+                    },
+                  ),
               ],
             )
           ],
@@ -449,7 +513,92 @@ class _MenuState extends State<Menu> {
       },
     );
   }
-
+  void _showModalBottomSheetGoLgin(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          )),
+      builder: (BuildContext bc) {
+        return Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Atenção",
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Color(0xff000000)),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Para realizar essa ação é necessário efetuar login",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Color(0xff000000)),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Spacer(),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Coloca para ir para login
+                            Navigator.pushNamed(context, "/ui/login");
+                          },
+                          child: Text("Login/Cadastro"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff000000),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(
+                            "Não",
+                            style: TextStyle(color: Color(0xff000000)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16)
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
   void _showModalBottomSheetZero(BuildContext context) {
     showModalBottomSheet(
       context: context,

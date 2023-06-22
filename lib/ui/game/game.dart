@@ -48,7 +48,8 @@ class _GameState extends State<Game> {
   bool _changeKeyboard = false;
 
   PuzFile puzFile = PuzFile.empty();
-
+  GlobalKey keyGame = GlobalKey();
+  GlobalKey keyHorizontalVertical = GlobalKey();
   int selectedWordIndex = -1;
   int startRowVertic = -1;
   int startColVertic = -1;
@@ -58,10 +59,12 @@ class _GameState extends State<Game> {
   int startCol = -1;
   int endRow = -1;
   int endCol = -1;
-  bool isHorizontal = false;
+  bool isHorizontal = true;
   int rowAll = 1000;
   int colAll = 1000;
+  int milli = 0;
   bool isDoubleClick = false;
+  bool isDoubleClickConfig = true;
   DateTime? lastTapTime;
   List<String> alphabet = ['ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
   final requestsWebServices = RequestsWebServices(WSConstantes.URLBASE);
@@ -116,12 +119,7 @@ class _GameState extends State<Game> {
   late TutorialCoachMark tutorialCoachMark;
   List<TargetFocus> targets = [];
 
-  GlobalKey keyGame = GlobalKey();
-  GlobalKey keyHorizontalVertical = GlobalKey();
 
-  // GlobalKey key1 = GlobalKey();
-  // GlobalKey key2 = GlobalKey();
-  // GlobalKey key3 = GlobalKey();
 
   //keyboardLetters.addAll(List.generate(5, (_) => alphabet[Random().nextInt(alphabet.length)]));
   String getRandomLetter() {
@@ -240,7 +238,8 @@ class _GameState extends State<Game> {
           children: [
             Text(
               "Para inverter de horizontal para veritical, clique duas vezes na grade.",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins',
+                fontWeight: FontWeight.w400,),
             )
           ],
         ),
@@ -258,7 +257,8 @@ class _GameState extends State<Game> {
                 Text(
 
                   "Inicie o jogo dando apenas 1 clique na cruzada.",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,),
                 )
               ],
             ),
@@ -267,38 +267,38 @@ class _GameState extends State<Game> {
     return targets;
   }
 
-  void selectFirstWord() {
-    if (puzFile.wordStartPositions.isNotEmpty) {
-      List<int> startPosition = puzFile.wordStartPositions[0];
-      int startRow = startPosition[0];
-      int startCol = startPosition[1];
-      List<WordPosition> positionWords =
-          puzFile.findWordPositions(puzFile.solution);
-      WordPosition? positionWord =
-          findContainingWord(positionWords, startRow, startCol);
-      String selectedWord = '';
-      if (puzFile.solution[startRow][startCol] != '.') {
-        selectedWord += puzFile.solution[startRow][startCol];
-        // Selecionar horizontalmente até o fim da palavra
-        for (int col = startCol + 1; col < puzFile.width; col++) {
-          if (puzFile.solution[startRow][col] != '.') {
-            selectedWord += puzFile.solution[startRow][col];
-          } else {
-            break;
-          }
-        }
-      }
-      setState(() {
-        rowAll = startRow;
-        colAll = startCol;
-        endRow = positionWord.endRow;
-        endCol = positionWord.endCol;
-        updateSelectedWord(selectedWord);
-        wordHint = puzFile.extractHint(selectedWord);
-        print("Palavra: ${selectedWord}");
-      });
-    }
-  }
+  // void selectFirstWord() {
+  //   if (puzFile.wordStartPositions.isNotEmpty) {
+  //     List<int> startPosition = puzFile.wordStartPositions[0];
+  //     int startRow = startPosition[0];
+  //     int startCol = startPosition[1];
+  //     List<WordPosition> positionWords =
+  //         puzFile.findWordPositions(puzFile.solution);
+  //     WordPosition? positionWord =
+  //         findContainingWord(positionWords, startRow, startCol);
+  //     String selectedWord = '';
+  //     if (puzFile.solution[startRow][startCol] != '.') {
+  //       selectedWord += puzFile.solution[startRow][startCol];
+  //       // Selecionar horizontalmente até o fim da palavra
+  //       for (int col = startCol + 1; col < puzFile.width; col++) {
+  //         if (puzFile.solution[startRow][col] != '.') {
+  //           selectedWord += puzFile.solution[startRow][col];
+  //         } else {
+  //           break;
+  //         }
+  //       }
+  //     }
+  //     setState(() {
+  //       rowAll = startRow;
+  //       colAll = startCol;
+  //       endRow = positionWord.endRow;
+  //       endCol = positionWord.endCol;
+  //       updateSelectedWord(selectedWord);
+  //       wordHint = puzFile.extractHint(selectedWord);
+  //       print("Palavra: ${selectedWord}");
+  //     });
+  //   }
+  // }
 
   void printGridWithWords() {
     print('Grid com palavras preenchidas:');
@@ -711,20 +711,19 @@ class _GameState extends State<Game> {
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
+                            SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: puzFile.width,
                             ),
                             itemBuilder: (context, index) {
                               int row = index ~/ puzFile.width;
                               int col = index % puzFile.width;
                               String cellValue =
-                                  puzFile.playerSolution[row][col];
-
+                              puzFile.playerSolution[row][col];
                               String keyvalue = (puzFile.wordStartPositions
-                                          .indexWhere((position) =>
-                                              position[0] == row &&
-                                              position[1] == col) +
-                                      1)
+                                  .indexWhere((position) =>
+                              position[0] == row &&
+                                  position[1] == col) +
+                                  1)
                                   .toString();
                               if (puzFile.solution[row][col] == '.') {
                                 return Container(
@@ -740,93 +739,47 @@ class _GameState extends State<Game> {
 
                               return GestureDetector(
                                 onTap: () {
+                                  String selectedWord = '';
                                   int wordIndex =
-                                      0; // Obtenha o índice da palavra correspondente a este item da lista
-                                  //selectWord(wordIndex);
+                                  0; // Obtenha o índice da palavra correspondente a este item da lista
+                                  selectWord(wordIndex);
 
                                   Map<String, String> wordHintsMap =
-                                      puzFile.getWordHintsMap();
+                                  puzFile.getWordHintsMap();
 
-                                  print("Primeiro click");
-
-                                  List<WordPosition> positionWords = puzFile
-                                      .findWordPositions(puzFile.solution);
-                                  WordPosition? positionWord =
-                                      findContainingWord(
-                                          positionWords, row, col);
-                                  if (positionWord != null) {
-                                    wordIndex =
-                                        positionWords.indexOf(positionWord);
-                                  }
                                   setState(() {
                                     rowAll = row;
                                     colAll = col;
-
-                                    // Selecionar linha até encontrar um "."
-                                    if (isHorizontal) {
-                                      startCol = col;
-                                      endCol = col;
-                                      startRow =
-                                          positionWords[wordIndex].startRow;
-                                      endRow =
-                                          positionWords[wordIndex].startRow;
-                                      while (startCol > 0 &&
-                                          puzFile.solution[row][startCol - 1] !=
-                                              '.') {
-                                        startCol--;
-                                      }
-                                      while (endCol <
-                                              puzFile.solution[row].length -
-                                                  1 &&
-                                          puzFile.solution[row][endCol + 1] !=
-                                              '.') {
-                                        endCol++;
-                                      }
-                                    } else {
-                                      startRow = row;
-                                      endRow = row;
-                                      startCol =
-                                          positionWords[wordIndex].startCol;
-                                      endCol =
-                                          positionWords[wordIndex].startCol;
-                                      while (startRow > 0 &&
-                                          puzFile.solution[startRow - 1][col] !=
-                                              '.') {
-                                        startRow--;
-                                      }
-                                      while (endRow <
-                                              puzFile.solution.length - 1 &&
-                                          puzFile.solution[endRow + 1][col] !=
-                                              '.') {
-                                        endRow++;
-                                      }
-                                    }
+                                    milli = 300;
                                   });
+
 
                                   if (lastTapTime != null &&
                                       DateTime.now().difference(lastTapTime!) <
-                                          Duration(milliseconds: 300)) {
+                                          Duration(milliseconds: milli)) {
                                     // Clique duplo detectado
                                     isDoubleClick = true;
-                                    print("Segundo click");
                                   } else {
                                     // Clique único
                                     isDoubleClick = false;
                                   }
                                   lastTapTime = DateTime.now();
 
-                                  String selectedWord = '';
+                                  List<WordPosition> positionWords = puzFile.findWordPositions(puzFile.solution);
+                                  WordPosition? positionWord = findContainingWord(positionWords, row, col);
+
+
 
                                   if (puzFile.solution[row][col] != '.' &&
                                       positionWord != null &&
                                       ((isHorizontal &&
-                                              col >= positionWord.startCol &&
-                                              col <= positionWord.endCol) ||
+                                          col >= positionWord.startCol &&
+                                          col <= positionWord.endCol) ||
                                           (!isHorizontal &&
                                               row >= positionWord.startRow &&
                                               row <= positionWord.endRow))) {
                                     wordHint =
-                                        wordHintsMap[positionWord.toString()]!;
+                                    wordHintsMap[positionWord.toString()]!;
                                     if (startRow == -1 && startCol == -1) {
                                       // Início da seleção
                                       setState(() {
@@ -834,35 +787,79 @@ class _GameState extends State<Game> {
                                         startCol = positionWord.startCol;
                                         endRow = positionWord.endRow;
                                         endCol = positionWord.endCol;
-                                        print(
-                                            "inicio da Row: $startRow, inicio da Col: $startCol, fim da Row: $endRow, fim da Col: $endCol");
+                                        print("inicio da Row: $startRow, inicio da Col: $startCol, fim da Row: $endRow, fim da Col: $endCol");
                                       });
-                                    } else if (startRow != -1 &&
-                                        startCol != -1) {
+                                    } else {
                                       // Fim da seleção
-                                      if (isHorizontal) {
-                                        // Seleção horizontal
-                                        if (isDoubleClick) {
-                                          // Duplo clique detectado, selecionar verticalmente
-                                          isHorizontal = false;
-                                          int wordLength = 0;
-                                          while (
-                                              row < puzFile.solution.length &&
-                                                  puzFile.solution[row][col] !=
-                                                      '.') {
-                                            wordLength++;
-                                            row++;
+                                      setState(() {
+                                        if (isHorizontal) {
+                                          // Seleção horizontal
+                                          if (isDoubleClick) {
+                                            // Duplo clique detectado, selecionar verticalmente
+                                            isHorizontal = false;
+                                            int wordLength = 0;
+                                            int startRowVertical = row;
+                                            while (startRowVertical > 0 && puzFile.solution[startRowVertical - 1][col] != '.') {
+                                              startRowVertical--;
+                                            }
+                                            int endRowVertical = row;
+                                            while (endRowVertical < puzFile.solution.length - 1 && puzFile.solution[endRowVertical + 1][col] != '.') {
+                                              endRowVertical++;
+                                            }
+                                            while (row <
+                                                puzFile.solution.length &&
+                                                puzFile.solution[row][col] !=
+                                                    '.') {
+                                              wordLength++;
+                                              row++;
+                                            }
+                                            startRow = startRowVertical;
+                                            startCol = col;
+                                            endRow = endRowVertical;
+                                            endCol = col;
+                                            print("Seleção vertical");
+                                          } else {
+                                            // Clique simples fora da seleção vertical
+                                            if (row < startRow ||
+                                                row > endRow ||
+                                                col < startCol ||
+                                                col > endCol) {
+                                              // Clique fora da seleção vertical, selecionar horizontalmente
+                                              startRow = positionWord.startRow;
+                                              startCol = positionWord.startCol;
+                                              endRow = positionWord.endRow;
+                                              endCol = positionWord.endCol;
+                                              print("Seleção horizontal");
+                                            }
                                           }
-                                          endRow = startRow + wordLength - 1;
-                                          endCol = col;
-                                          print("Seleção vertical");
                                         } else {
-                                          // Clique simples fora da seleção vertical
-                                          if (row < startRow ||
-                                              row > endRow ||
-                                              col < startCol ||
-                                              col > endCol) {
-                                            // Clique fora da seleção vertical, selecionar horizontalmente
+                                          // Seleção vertical
+                                          if (!isDoubleClick) {
+                                            // Clique simples fora da seleção vertical
+                                            if (col != startCol) {
+                                              // Selecionar coluna verticalmente
+                                              startCol = col;
+                                              endCol = col;
+                                              startRow = positionWord.startRow;
+                                              endRow = positionWord.startRow;
+                                              while (startRow > 0 &&
+                                                  puzFile.solution[startRow - 1]
+                                                  [col] !=
+                                                      '.') {
+                                                startRow--;
+                                              }
+                                              while (endRow <
+                                                  puzFile.solution.length -
+                                                      1 &&
+                                                  puzFile.solution[endRow + 1]
+                                                  [col] !=
+                                                      '.') {
+                                                endRow++;
+                                              }
+                                            }
+                                          } else {
+                                            // Duplo clique detectado, voltar para seleção horizontal
+                                            isHorizontal = true;
                                             startRow = positionWord.startRow;
                                             startCol = positionWord.startCol;
                                             endRow = positionWord.endRow;
@@ -870,56 +867,19 @@ class _GameState extends State<Game> {
                                             print("Seleção horizontal");
                                           }
                                         }
-                                      } else {
-                                        // Seleção vertical
-                                        if (!isDoubleClick) {
-                                          // Clique simples fora da seleção vertical
-                                          if (col != startCol) {
-                                            // Selecionar coluna verticalmente
-                                            startCol = col;
-                                            endCol = col;
-                                            startRow = positionWord.startRow;
-                                            endRow = positionWord.startRow;
-                                            while (startRow > 0 &&
-                                                puzFile.solution[startRow - 1]
-                                                        [col] !=
-                                                    '.') {
-                                              startRow--;
-                                            }
-                                            while (endRow <
-                                                    puzFile.solution.length -
-                                                        1 &&
-                                                puzFile.solution[endRow + 1]
-                                                        [col] !=
-                                                    '.') {
-                                              endRow++;
-                                            }
-                                          }
-                                        } else {
-                                          // Duplo clique detectado, voltar para seleção horizontal
-                                          isHorizontal = true;
-                                          startRow = positionWord.startRow;
-                                          startCol = positionWord.startCol;
-                                          endRow = positionWord.endRow;
-                                          endCol = positionWord.endCol;
-                                          print("Seleção horizontal");
-                                        }
-                                      }
+                                      });
                                     }
                                   }
 
                                   if (isHorizontal) {
                                     // Seleção horizontal
                                     for (int colIndex = startCol;
-                                        colIndex <= endCol;
-                                        colIndex++) {
+                                    colIndex <= endCol;
+                                    colIndex++) {
                                       if (puzFile.solution[row][colIndex] !=
                                           '.') {
                                         selectedWord +=
-                                            puzFile.solution[row][colIndex];
-
-                                        print(
-                                            "Seleção horizontal $selectedWord");
+                                        puzFile.solution[row][colIndex];
                                       } else {
                                         break;
                                       }
@@ -927,13 +887,12 @@ class _GameState extends State<Game> {
                                   } else {
                                     // Seleção vertical
                                     for (int rowIndex = startRow;
-                                        rowIndex <= endRow;
-                                        rowIndex++) {
+                                    rowIndex <= endRow;
+                                    rowIndex++) {
                                       if (puzFile.solution[rowIndex][col] !=
                                           '.') {
                                         selectedWord +=
-                                            puzFile.solution[rowIndex][col];
-                                        print("Seleção vertical $selectedWord");
+                                        puzFile.solution[rowIndex][col];
                                       } else {
                                         break;
                                       }
@@ -977,34 +936,34 @@ class _GameState extends State<Game> {
                                           padding: EdgeInsets.all(2),
                                           child: Center(
                                             child: puzFile.wordStartPositions
-                                                            .indexWhere(
-                                                                (position) =>
-                                                                    position[
-                                                                            0] ==
-                                                                        row &&
-                                                                    position[
-                                                                            1] ==
-                                                                        col) +
-                                                        1 ==
-                                                    0
+                                                .indexWhere(
+                                                    (position) =>
+                                                position[
+                                                0] ==
+                                                    row &&
+                                                    position[
+                                                    1] ==
+                                                        col) +
+                                                1 ==
+                                                0
                                                 ? SizedBox()
                                                 : Text(
-                                                    (puzFile.wordStartPositions
-                                                                .indexWhere((position) =>
-                                                                    position[
-                                                                            0] ==
-                                                                        row &&
-                                                                    position[
-                                                                            1] ==
-                                                                        col) +
-                                                            1)
-                                                        .toString(),
-                                                    style: TextStyle(
-                                                      fontSize: 8,
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                    ), // Small number font size and color
-                                                  ),
+                                              (puzFile.wordStartPositions
+                                                  .indexWhere((position) =>
+                                              position[
+                                              0] ==
+                                                  row &&
+                                                  position[
+                                                  1] ==
+                                                      col) +
+                                                  1)
+                                                  .toString(),
+                                              style: TextStyle(
+                                                fontSize: 8,
+                                                color: Color.fromARGB(
+                                                    255, 0, 0, 0),
+                                              ), // Small number font size and color
+                                            ),
                                           ),
                                         ),
                                       ),

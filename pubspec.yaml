@@ -102,6 +102,7 @@ flutter:
     - icons/share.svg
     - icons/trash.svg
     - icons/user.svg
+    - icons/login.svg
 
     - animation/empty.json
     - animation/confetti.json

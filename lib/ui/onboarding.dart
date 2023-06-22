@@ -90,7 +90,7 @@ class _OnboardingState extends State<Onboarding> {
               children: [
               TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, "/ui/login"); //AQUI ESTA UMA NAVEGAÇAO COM ROTA
+                  Navigator.pushNamed(context, "/ui/home"); //AQUI ESTA UMA NAVEGAÇAO COM ROTA
                 },
                 child: Text(
                   "PULAR",
@@ -119,7 +119,7 @@ class _OnboardingState extends State<Onboarding> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/ui/login");
+                    Navigator.pushNamed(context, "/ui/home");
                   },
                   child: Text(
                     "INICIAR",

@@ -15,6 +15,7 @@ import '../config/constants.dart';
 import '../config/preferences.dart';
 import '../config/requests.dart';
 import '../model/user.dart';
+import 'menu.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -24,18 +25,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  var nameUser = 'Joao Victor';
+  var nameUser = 'Seja bem-vindo';
   var avatarUser = '';
   var dific = '';
   int unreadNotificationsCount = 0;
   String notificationsCount = "0";
-  String? totalValue = '';
-  String? finalizadasValue = '';
-  String? pendentesValue = '';
+  String? totalValue = '0';
+  String? finalizadasValue = '0';
+  String? pendentesValue = '0';
   bool _listTyper = false;
   bool _dificScreen = false;
   List<Cruzada> niveis = [];
-
+  bool isLoggedIn = false;
   final List<Cruzada> crossWords = [];
   final List<Cruzada> crossWordsFinalizadas = [];
   final List<User> notifications = [];
@@ -44,36 +45,40 @@ class _HomeState extends State<Home> {
 
   Future<String?> getFCM() async {
     await Preferences.init();
-    String? savedFcmToken = await Preferences.getInstanceTokenFcm();
-    //nameUser = (await Preferences.getUserData()!.name)!;
-    String? currentFcmToken = await _firebaseMessaging.getToken();
-    if (savedFcmToken != null && savedFcmToken == currentFcmToken) {
-      print('FCM: não salvou');
-      return savedFcmToken;
+    isLoggedIn = await Preferences.getLogin();
+    if(isLoggedIn){
+      String? savedFcmToken = await Preferences.getInstanceTokenFcm();
+      //nameUser = (await Preferences.getUserData()!.name)!;
+      String? currentFcmToken = await _firebaseMessaging.getToken();
+      if (savedFcmToken != null && savedFcmToken == currentFcmToken) {
+        print('FCM: não salvou');
+        return savedFcmToken;
+      }
+      var _userId = await Preferences.getUserData()!.id;
+      var _type = '';
+      if (Platform.isAndroid) {
+        _type = WSConstantes.FCM_TYPE_ANDROID;
+      } else if (Platform.isIOS) {
+        _type = WSConstantes.FCM_TYPE_IOS;
+      }
+      final body = {
+        WSConstantes.ID_USER: _userId,
+        WSConstantes.TYPE: _type,
+        WSConstantes.REGIST_ID: currentFcmToken,
+        WSConstantes.TOKENID: WSConstantes.TOKEN
+      };
+      final response =
+      await requestsWebServices.sendPostRequest(WSConstantes.SAVE_FCM, body);
+
+      print('FCM: $currentFcmToken');
+      print('RESPOSTA: $response');
+
+      // Salvamos o FCM atual nas preferências.
+      await Preferences.saveInstanceTokenFcm("token", currentFcmToken!);
+
+      return currentFcmToken;
     }
-    var _userId = await Preferences.getUserData()!.id;
-    var _type = '';
-    if (Platform.isAndroid) {
-      _type = WSConstantes.FCM_TYPE_ANDROID;
-    } else if (Platform.isIOS) {
-      _type = WSConstantes.FCM_TYPE_IOS;
-    }
-    final body = {
-      WSConstantes.ID_USER: _userId,
-      WSConstantes.TYPE: _type,
-      WSConstantes.REGIST_ID: currentFcmToken,
-      WSConstantes.TOKENID: WSConstantes.TOKEN
-    };
-    final response =
-        await requestsWebServices.sendPostRequest(WSConstantes.SAVE_FCM, body);
 
-    print('FCM: $currentFcmToken');
-    print('RESPOSTA: $response');
-
-    // Salvamos o FCM atual nas preferências.
-    await Preferences.saveInstanceTokenFcm("token", currentFcmToken!);
-
-    return currentFcmToken;
   }
 
   Future<String?> getUserData() async {
@@ -189,13 +194,19 @@ class _HomeState extends State<Home> {
               );
               if (crossWord.rows != 0) {
                 crossWords.add(crossWord);
+
               } else {
                 crossWords.clear();
               }
 
               print(crossWords);
             }
+            if(totalValue == '0' && pendentesValue == '0'){
+              totalValue = crossWords.length.toString();
+              pendentesValue = crossWords.length.toString();
+            }
           });
+
         } else {
           print('NULO');
         }
@@ -222,6 +233,10 @@ class _HomeState extends State<Home> {
               );
               if (crossWord.rows != 0) {
                 crossWordsFinalizadas.add(crossWord);
+                if(totalValue == '0' && pendentesValue == '0'){
+                  totalValue = crossWordsFinalizadas.length.toString();
+                  pendentesValue = crossWordsFinalizadas.length.toString();
+                }
               } else {
                 crossWordsFinalizadas.clear();
               }
@@ -232,7 +247,12 @@ class _HomeState extends State<Home> {
           print('NULO');
         }
       }
-      getStatistics();
+
+
+      if(isLoggedIn){
+        getStatistics();
+      }
+
     } catch (e) {
       print(e);
     }
@@ -284,7 +304,7 @@ class _HomeState extends State<Home> {
               "$unreadNotificationsCount aqui e total antes de chega no badge");
           print("Tamanho da tela:${MediaQuery.of(context).size.width}");
         });
-        getListNiveis();
+
       } else {
         print('NULO');
       }
@@ -292,12 +312,20 @@ class _HomeState extends State<Home> {
       print(e);
     }
   }
-
+  Future<void> initilPreferences() async {
+    await Preferences.init();
+    isLoggedIn = await Preferences.getLogin();
+    getListNiveis();
+    getUserData();
+  }
   @override
   void initState() {
     super.initState();
+    initilPreferences();
     getFCM();
-    getUserData();
+
+
+
     getListCruazadist(1, 0);
   }
 
@@ -332,7 +360,10 @@ class _HomeState extends State<Home> {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, "/ui/menu");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Menu(isloggin: isLoggedIn!)),
+                      );
                     },
                     //avatar.png
                     child: Material(
@@ -363,7 +394,12 @@ class _HomeState extends State<Home> {
                   Spacer(),
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, "/ui/notification");
+                      if(isLoggedIn){
+                        Navigator.pushNamed(context, "/ui/notification");
+                      }else{
+                        _showModalBottomSheetGoLgin(context);
+                      }
+
                     },
                     child: Card(
                       margin: EdgeInsets.all(0),
@@ -682,7 +718,7 @@ class _HomeState extends State<Home> {
                         return GridView.count(
                           crossAxisCount: 2, // Define duas colunas
                           children: List.generate(crossWords.length, (index) {
-                            return MyCard(crossWordL: crossWords[index]);
+                            return MyCard(crossWordL: crossWords[index], islogin: isLoggedIn,);
                           }),
                         );
                       }
@@ -725,7 +761,7 @@ class _HomeState extends State<Home> {
                             children: List.generate(
                                 crossWordsFinalizadas.length, (index) {
                               return MyCard(
-                                  crossWordL: crossWordsFinalizadas[index]);
+                                  crossWordL: crossWordsFinalizadas[index], islogin: isLoggedIn,);
                             }),
                           );
                         }
@@ -739,32 +775,122 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+  void _showModalBottomSheetGoLgin(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          )),
+      builder: (BuildContext bc) {
+        return Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Atenção",
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Color(0xff000000)),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Para realizar essa ação você precisa estar logado.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Color(0xff000000)),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Spacer(),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Coloca para ir para login
+                            Navigator.pushNamed(context, "/ui/login");
+                          },
+                          child: Text("Login/Cadastro"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff000000),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(
+                            "Não",
+                            style: TextStyle(color: Color(0xff000000)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16)
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
 class CrossWordL {
   final String title;
   final String image;
 
+
   CrossWordL(this.title, this.image);
 }
 
 class MyCard extends StatelessWidget {
   final Cruzada crossWordL;
-
-  MyCard({required this.crossWordL});
+  final bool islogin;
+  MyCard({required this.crossWordL, required this.islogin});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         print(crossWordL.url);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Game(
-                      cruzada: crossWordL,
-                    )));
-        // Navigator.pushNamed(context, "/ui/game");
+        if(islogin){
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Game(
+                    cruzada: crossWordL,
+                  )));
+        }else{
+          _showModalBottomSheetGoLgin(context);
+        }
       },
       child: Card(
         margin: EdgeInsets.only(left: 8, right: 8, bottom: 8),
@@ -793,55 +919,92 @@ class MyCard extends StatelessWidget {
         ),
       ),
     );
-    Widget buildContainer(double width, String totalValue) {
-      return Container(
-        width: width,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.black,
-              Color(0xff424242),
+  }
+  void _showModalBottomSheetGoLgin(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          )),
+      builder: (BuildContext bc) {
+        return Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Atenção",
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Color(0xff000000)),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      thickness: 1,
+                    ),
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Para realizar essa ação você precisa estar logado.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Color(0xff000000)),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Spacer(),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Coloca para ir para login
+                            Navigator.pushNamed(context, "/ui/login");
+                          },
+                          child: Text("Login/Cadastro"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff000000),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(
+                            "Não",
+                            style: TextStyle(color: Color(0xff000000)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16)
+                  ],
+                ),
+              ),
             ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
           ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 8,
-          color: Colors.transparent,
-          child: Container(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  totalValue!,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
-                Text(
-                  'Total',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
+        );
+      },
+    );
   }
 }
 
@@ -910,4 +1073,5 @@ class buildContainer extends StatelessWidget {
       ),
     );
   }
+
 }
