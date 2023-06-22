@@ -59,8 +59,8 @@ class _GameState extends State<Game> {
   int endRow = -1;
   int endCol = -1;
   bool isHorizontal = false;
-  int rowAll = 0;
-  int colAll = 0;
+  int rowAll = 1000;
+  int colAll = 1000;
   bool isDoubleClick = false;
   DateTime? lastTapTime;
   List<String> alphabet = ['ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
