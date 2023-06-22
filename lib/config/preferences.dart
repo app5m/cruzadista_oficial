@@ -83,6 +83,7 @@ class Preferences {
     await preferences.remove('login');
     await preferences.remove('token');
     await preferences.remove('unreadNotificationsCount');
+    await preferences.remove('hasSeenTutorial');
   }
 
   static Future<void> setUnreadNotificationsCount(int count) async {
@@ -91,6 +92,14 @@ class Preferences {
 
   static int getUnreadNotificationsCount() {
     return _preferences!.getInt('unreadNotificationsCount') ?? 0;
+  }
+
+  static Future<void> setHasSeenTutorial(bool value) async {
+    await _preferences!.setBool('hasSeenTutorial', value);
+  }
+
+  static bool getHasSeenTutorial() {
+    return _preferences!.getBool('hasSeenTutorial') ?? false;
   }
 
   static const ENTERING_FIRST_TIME = 'EnteringFirstTime';

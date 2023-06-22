@@ -137,7 +137,7 @@ class PuzFile {
     ];
 
     for (String clue in wordHints) {
-      List<String> parts = clue.split(":");
+      List<String> parts = clue.split("#");
       String hint = parts[0];
       String word = parts[1];
 

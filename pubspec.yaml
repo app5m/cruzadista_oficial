@@ -49,6 +49,12 @@ dependencies:
   flutter_local_notifications: ^14.1.1
   share_plus: ^7.0.2
   flutter_share: ^2.0.0
+  built_in_keyboard: ^0.2.0
+  tutorial_coach_mark: ^1.2.9
+  flutter_keyboard_visibility: ^5.4.1
+  virtual_keyboard_multi_language: ^1.0.3
+  virtual_keyboard_custom_layout: ^0.0.5
+
 
 
 dev_dependencies:
