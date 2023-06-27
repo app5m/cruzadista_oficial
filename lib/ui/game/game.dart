@@ -73,6 +73,7 @@ class _GameState extends State<Game> {
 
 // Lista de letras do teclado
   String selectedWord = ''; // Palavra selecionada
+  String word = ''; // Palavra selecionada
   bool showKeyboard = false;
   List<List<int>> verticalWordPositions = [];
   String wordHint = "";
@@ -562,11 +563,23 @@ class _GameState extends State<Game> {
   }
 
   void revealAllWords() {
+    cleanAllWords();
     for (int row = 0; row < puzFile.height; row++) {
       for (int col = 0; col < puzFile.width; col++) {
         if (puzFile.solution[row][col] != '.') {
           String letter = puzFile.solution[row][col];
           revealLetter(row, col, letter);
+        }
+      }
+    }
+  }
+
+  void cleanAllWords() {
+    for (int row = 0; row < puzFile.height; row++) {
+      for (int col = 0; col < puzFile.width; col++) {
+        if (puzFile.solution[row][col] != '.') {
+          String letter = "";
+          updatePlayerSolution(row, col, letter);
         }
       }
     }
@@ -676,6 +689,7 @@ class _GameState extends State<Game> {
                                     } else if (reveletionLetter) {
                                       reveltionLetter();
                                     } else if (reveletionGrade) {
+
                                       revealAllWords();
                                     }
                                   },
@@ -908,6 +922,8 @@ class _GameState extends State<Game> {
                                     wordHint =
                                         puzFile.extractHint(selectedWord);
                                     print("Palavra: ${selectedWord}");
+
+                                    word = selectedWord;
                                   });
                                   isGameCompleted();
 
@@ -1178,6 +1194,27 @@ class _GameState extends State<Game> {
             ),
     );
   }
+  void updateCurrentCell() {
+    setState(() {
+      if (isHorizontal) {
+        // Seleção horizontal
+        if (colAll < endCol) {
+          colAll++;
+        } else {
+          // Se chegou ao final da seleção horizontal, vá para a próxima palavra
+          //goToNextWord();
+        }
+      } else {
+        // Seleção vertical
+        if (rowAll < endRow) {
+          rowAll++;
+        } else {
+          // Se chegou ao final da seleção vertical, vá para a próxima palavra
+          //goToNextWord();
+        }
+      }
+    });
+  }
 
   _onKeyPress(VirtualKeyboardKey key) {
     if (key.keyType == VirtualKeyboardKeyType.String) {
@@ -1202,6 +1239,7 @@ class _GameState extends State<Game> {
     // Update the screen
     setState(() {
       updatePlayerSolution(rowAll, colAll, key.text!);
+      updateCurrentCell();
     });
   }
 }
