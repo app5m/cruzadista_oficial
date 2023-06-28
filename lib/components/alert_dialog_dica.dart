@@ -7,7 +7,7 @@ class DialogDic extends StatefulWidget {
   Color? colorCell;
   Color? colorText;
 
-  final Function(bool, bool, bool) onContainerFilter;
+  final Function(bool, bool, bool, bool) onContainerFilter;
 
   DialogDic(
       {Key? key,
@@ -24,6 +24,7 @@ class _DialogDicState extends State<DialogDic> {
   bool reveltionWord = false;
   bool reveltionLetre = false;
   bool reveltionGrade = false;
+  bool checkWord = false;
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +78,9 @@ class _DialogDicState extends State<DialogDic> {
                     reveltionWord = true;
                     reveltionLetre = false;
                     reveltionGrade = false;
+                    checkWord = false;
                   });
-                  widget.onContainerFilter(reveltionWord, reveltionLetre, reveltionGrade);
+                  widget.onContainerFilter(reveltionWord, reveltionLetre, reveltionGrade, checkWord);
                   Navigator.of(context).pop();
                 },
                 child: Text(
@@ -108,8 +110,9 @@ class _DialogDicState extends State<DialogDic> {
                     reveltionWord = false;
                     reveltionLetre = true;
                     reveltionGrade = false;
+                    checkWord = false;
                   });
-                  widget.onContainerFilter(reveltionWord, reveltionLetre, reveltionGrade);
+                  widget.onContainerFilter(reveltionWord, reveltionLetre, reveltionGrade, checkWord);
                   Navigator.of(context).pop();
                 },
                 child: Text(
@@ -139,8 +142,9 @@ class _DialogDicState extends State<DialogDic> {
                     reveltionWord = false;
                     reveltionLetre = false;
                     reveltionGrade = true;
+                    checkWord = false;
                   });
-                  widget.onContainerFilter(reveltionWord, reveltionLetre, reveltionGrade);
+                  widget.onContainerFilter(reveltionWord, reveltionLetre, reveltionGrade, checkWord);
                   Navigator.of(context).pop();
                 },
                 child: Text(

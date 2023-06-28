@@ -84,6 +84,7 @@ class Preferences {
     await preferences.remove('token');
     await preferences.remove('unreadNotificationsCount');
     await preferences.remove('hasSeenTutorial');
+    await preferences.remove('correctWords');
   }
 
   static Future<void> setUnreadNotificationsCount(int count) async {
@@ -100,6 +101,20 @@ class Preferences {
 
   static bool getHasSeenTutorial() {
     return _preferences!.getBool('hasSeenTutorial') ?? false;
+
+  }
+  static Future<void> saveCorrectWords(List<String> words) async {
+    final json = jsonEncode(words);
+    await setString('correctWords', json);
+  }
+
+  static List<String> getCorrectWords() {
+    final json = getString('correctWords');
+    if (json != null && json.isNotEmpty) {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list.map((item) => item.toString()).toList();
+    }
+    return [];
   }
 
   static const ENTERING_FIRST_TIME = 'EnteringFirstTime';
