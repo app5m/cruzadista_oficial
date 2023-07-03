@@ -637,10 +637,11 @@ class _GameState extends State<Game> {
               ), // Exibir o círculo de progresso enquanto estiver carregando
             )
           : Padding(
-              padding: EdgeInsets.only(top: 40),
+              padding: EdgeInsets.only(top: 50),
               child: Column(
                 children: [
                   Container(
+                    color: _colorCell,
                     child: SizedBox(
                       width: _bannerAd!.size.width.toDouble(),
                       height: _bannerAd!.size.height.toDouble(),
@@ -673,7 +674,7 @@ class _GameState extends State<Game> {
                             color: _colorCell == Colors.white
                                 ? Colors.black
                                 : _colorCell,
-                            fontSize: FontSizes.titulo,
+                            fontSize: FontSizes.subTitulo,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Poppins',
                           ),
