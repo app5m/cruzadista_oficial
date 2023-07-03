@@ -46,7 +46,7 @@ class CustomKeyboard extends StatelessWidget {
                     onKeyPressed(key);
                   },
                   child: Container(
-                    height: 50,
+                    height: 40,
                     color: Colors.transparent,
                     child: Center(
                       child:  key == "SHIFT"
@@ -55,7 +55,7 @@ class CustomKeyboard extends StatelessWidget {
                           ? Icon(Icons.backspace,color: colorCell,) // Ícone para BACKSPACE
                           : Text(
                         key,
-                        style: TextStyle(fontSize: 16,color: colorCell,),
+                        style: TextStyle(fontSize: 14,color: colorCell,),
                       ),
                     ),
                   ),
