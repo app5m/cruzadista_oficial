@@ -10,7 +10,7 @@ import 'package:cruzadista/ui/game/sucess_game.dart';
 import 'package:cruzadista/ui/game/word_position.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+//import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:virtual_keyboard_custom_layout/virtual_keyboard_custom_layout.dart';
 import '../../components/crosswordview.dart';
@@ -33,7 +33,7 @@ class Game extends StatefulWidget {
 
 class _GameState extends State<Game> {
   //adMob
-  BannerAd? _bannerAd;
+ // BannerAd? _bannerAd;
   bool _isLoaded = false;
 
   // TODO: replace this test ad unit with your own ad unit.
@@ -41,28 +41,28 @@ class _GameState extends State<Game> {
       ? 'ca-app-pub-3940256099942544/6300978111'
       : 'ca-app-pub-3940256099942544/2934735716';
 
-  void loadAd() {
-    _bannerAd = BannerAd(
-      adUnitId: adUnitId,
-      request: const AdRequest(),
-      size: AdSize.banner,
-      listener: BannerAdListener(
-        // Called when an ad is successfully received.
-        onAdLoaded: (ad) {
-          debugPrint('$ad loaded.');
-          setState(() {
-            _isLoaded = true;
-          });
-        },
-        // Called when an ad request failed.
-        onAdFailedToLoad: (ad, err) {
-          debugPrint('BannerAd failed to load: $err');
-          // Dispose the ad here to free resources.
-          ad.dispose();
-        },
-      ),
-    )..load();
-  }
+  // void loadAd() {
+  //   _bannerAd = BannerAd(
+  //     adUnitId: adUnitId,
+  //     request: const AdRequest(),
+  //     size: AdSize.banner,
+  //     listener: BannerAdListener(
+  //       // Called when an ad is successfully received.
+  //       onAdLoaded: (ad) {
+  //         debugPrint('$ad loaded.');
+  //         setState(() {
+  //           _isLoaded = true;
+  //         });
+  //       },
+  //       // Called when an ad request failed.
+  //       onAdFailedToLoad: (ad, err) {
+  //         debugPrint('BannerAd failed to load: $err');
+  //         // Dispose the ad here to free resources.
+  //         ad.dispose();
+  //       },
+  //     ),
+  //   )..load();
+  // }
 
   late List<int> _gridElements;
 
@@ -207,7 +207,7 @@ class _GameState extends State<Game> {
 
   @override
   void initState() {
-    loadAd();
+   // loadAd();
     super.initState();
     String? url = widget.cruzada.url;
     String fileUrl = 'https://cruzadista.com.br/uploads/cruzadas/$url';
@@ -640,14 +640,14 @@ class _GameState extends State<Game> {
               padding: EdgeInsets.only(top: 50),
               child: Column(
                 children: [
-                  Container(
-                    color: _colorCell,
-                    child: SizedBox(
-                      width: _bannerAd!.size.width.toDouble(),
-                      height: _bannerAd!.size.height.toDouble(),
-                      child: AdWidget(ad: _bannerAd!),
-                    ),
-                  ),
+                  // Container(
+                  //   color: _colorCell,
+                  //   child: SizedBox(
+                  //     width: _bannerAd!.size.width.toDouble(),
+                  //     height: _bannerAd!.size.height.toDouble(),
+                  //     child: AdWidget(ad: _bannerAd!),
+                  //   ),
+                  // ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [

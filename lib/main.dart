@@ -13,7 +13,7 @@ import 'package:cruzadista/ui/update_password.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'config/notification_config.dart';
 import 'config/preferences.dart';
 
@@ -25,8 +25,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 main() async {
   var theme = ThemeMode.light;
-  WidgetsFlutterBinding.ensureInitialized(); // Garante a inicialização do Flutter
-  MobileAds.instance.initialize();
+  WidgetsFlutterBinding.ensureInitialized();
+  // MobileAds.instance.initialize();
   await Preferences.init();
 
   if(Platform.isAndroid){
